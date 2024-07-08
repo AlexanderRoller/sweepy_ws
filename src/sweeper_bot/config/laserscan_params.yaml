@@ -1,0 +1,15 @@
+depthimage_to_laserscan_node:
+  ros__parameters:
+    range_min: 0.3  # Minimum valid range value in meters
+    range_max: 6.0  # Maximum valid range value in meters (D455 effective range)
+    scan_time: 0.033  # Time between scans, approximate value for 30 FPS
+    output_frame_id: "camera_depth_frame"  # Frame ID for the output laser scan
+    use_inf: true  # Use inf for out of range values
+    inf_epsilon: 1.0  # Small value added to infinity values to distinguish them
+    scan_height: 1  # Number of rows in the depth image to use for the scan
+    angle_min: -1.047  # Minimum angle of the laser scan [rad], approximate -60 degrees
+    angle_max: 1.047  # Maximum angle of the laser scan [rad], approximate 60 degrees
+    angle_increment: 0.00183  # Angle increment for the laser scan [rad], based on depth image resolution
+    depth_img_topic: "/camera/realsense2_camera/depth/image_rect_raw"  # Input topic for the depth image
+    scan_topic: "/scan"  # Output topic for the laser scan
+    queue_size: 10  # Queue size for incoming message

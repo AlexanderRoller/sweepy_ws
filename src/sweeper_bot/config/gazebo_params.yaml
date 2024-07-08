@@ -1,0 +1,13 @@
+gazebo:
+  ros__parameters:
+    publish_rate: 400.0
+    use_sim_time: true
+    robot_namespace: ''
+    update_rate: 100.0
+    enable_ros_network: true
+    gazebo_material: 'Gazebo/Blue'
+    physics: 'ode' # Other options: 'bullet', 'dart', 'simbody'
+    world_name: 'empty.world'
+    paused: false
+    headless: false
+    verbose: true
