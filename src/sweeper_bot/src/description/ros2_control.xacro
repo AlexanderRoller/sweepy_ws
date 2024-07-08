@@ -15,7 +15,7 @@
           <state_interface name="position"/>
           <param name="address">128</param>
           <!--motor types must be one of M1 or M2-->
-          <param name="motor_type">M2</param>
+          <param name="motor_type">M1</param>
           <!-- Number of encoder ticks per wheel rotation -->
           <param name="qppr">54000</param>
       </joint>
@@ -24,7 +24,7 @@
           <state_interface name="position"/>
           <param name="address">128</param>
           <!--motor types must be one of M1 or M2-->
-          <param name="motor_type">M1</param>
+          <param name="motor_type">M2</param>
           <!-- Number of encoder ticks per wheel rotation -->
           <param name="qppr">54000</param>
       </joint>

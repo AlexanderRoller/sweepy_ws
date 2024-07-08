@@ -93,7 +93,7 @@ def generate_launch_description():
     )
 
     joint_state_broadcaster_spawner = TimerAction(
-        period=5.0,
+        period=2.5,
         actions=[
             Node(
                 package="controller_manager",
@@ -105,7 +105,7 @@ def generate_launch_description():
     )
 
     robot_controller_spawner = TimerAction(
-        period=10.0,
+        period=5.0,
         actions=[
             Node(
                 package="controller_manager",
@@ -116,7 +116,14 @@ def generate_launch_description():
         ]
     )
     
-
+    twist_mux_params = os.path.join(get_package_share_directory('sweeper_bot'),'config','twist_mux.yaml')
+    twist_mux = Node(
+            package="twist_mux",
+            executable="twist_mux",
+            parameters=[twist_mux_params],
+            remappings=[('/cmd_vel_out','/diffbot_base_controller/cmd_vel_unstamped')]
+        )
+    
     return LaunchDescription([
         DeclareLaunchArgument(name='model', default_value=default_model_path, description='Absolute path to robot urdf file'),
         DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path, description='Absolute path to rviz config file'),
@@ -129,4 +136,5 @@ def generate_launch_description():
         ros2_control_node,
         joint_state_broadcaster_spawner,
         robot_controller_spawner,
+        twist_mux,
     ])
