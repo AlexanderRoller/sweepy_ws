@@ -18,7 +18,7 @@ def generate_launch_description():
     nav2_params_file = os.path.join(get_package_share_directory('sweeper_bot'), 'config', 'costmap_params.yaml')
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
     bringup_launch_file = os.path.join(nav2_bringup_dir, 'launch', 'bringup_launch.py')
-    ekf_params_file = '/home/lex/sweeper_ws/src/sweeper_bot/config/ekf_params.yaml'
+    ekf_params_file = os.path.join(get_package_share_directory('sweeper_bot'), 'config', 'ekf_params.yaml')
 
     robot_description_content = Command(['xacro ', LaunchConfiguration('model')])
     robot_description = {'robot_description': robot_description_content}
@@ -131,7 +131,7 @@ def generate_launch_description():
         rsp,
         rviz_node,
         realsense_node,
-        ekf_node,
+        #ekf_node,
         imu_corrector_node,
         ros2_control_node,
         joint_state_broadcaster_spawner,
