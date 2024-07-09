@@ -37,9 +37,9 @@ class IMUDataCorrector(Node):
         corrected_data.header = data.header
 
         # Swap angular_velocity to linear_acceleration with coordinate transform
-        corrected_data.linear_acceleration.x = data.angular_velocity.x  # Adjust according to your coordinate system
-        corrected_data.linear_acceleration.y = data.angular_velocity.y  # Adjust according to your coordinate system
-        corrected_data.linear_acceleration.z = data.angular_velocity.z  # Adjust according to your coordinate system
+        corrected_data.linear_acceleration.x = data.angular_velocity.z  # Adjust according to your coordinate system
+        corrected_data.linear_acceleration.y = -(data.angular_velocity.x)  # Adjust according to your coordinate system
+        corrected_data.linear_acceleration.z = -(data.angular_velocity.y)  # Adjust according to your coordinate system
 
         corrected_data.orientation = data.orientation
         corrected_data.orientation_covariance = data.orientation_covariance
@@ -55,9 +55,9 @@ class IMUDataCorrector(Node):
         corrected_data.header = data.header
 
         # Swap linear_acceleration to angular_velocity with coordinate transform
-        corrected_data.angular_velocity.x = data.linear_acceleration.x  # Adjust according to your coordinate system
-        corrected_data.angular_velocity.y = data.linear_acceleration.y  # Adjust according to your coordinate system
-        corrected_data.angular_velocity.z = data.linear_acceleration.z  # Adjust according to your coordinate system
+        corrected_data.angular_velocity.x = data.linear_acceleration.z  # Adjust according to your coordinate system
+        corrected_data.angular_velocity.y = -(data.linear_acceleration.x)  # Adjust according to your coordinate system
+        corrected_data.angular_velocity.z = -(data.linear_acceleration.y)  # Adjust according to your coordinate system
 
         corrected_data.orientation = data.orientation
         corrected_data.orientation_covariance = data.orientation_covariance

@@ -11,29 +11,28 @@ ekf_filter_node:
     world_frame: "odom"
 
     odom0: "/diffbot_base_controller/odom"
-    odom0_config: [true, true, false,
+    odom0_config: [true, true, true,
                    false, false, false,
-                   true, true, false,
+                   true, true, true,
                    false, false, false,
-                   true, true, false,]
+                   true, true, true,]
 
-    # imu0: "/camera/realsense2_camera/gyro/corrected"
-    # imu0_config: [false, false, false,  # Don't use orientation
-    #               false,  false,  false,  # Use angular velocity x, y, z
-    #               false, false, false,  # Don't use linear velocity
-    #               false, false, false,  # Don't use orientation velocity
-    #               false, false, false]  # Don't use linear acceleration
+    imu1: "/camera/realsense2_camera/gyro/corrected"
+    imu1_config: [false, false, false,  # Don't use orientation
+                  true,  true,  true,  # Use angular velocity x, y, z
+                  false, false, false,  # Don't use linear velocity
+                  false, false, false,  # Don't use orientation velocity
+                  false, false, false]  # Don't use linear acceleration
+    imu1_remove_gravitational_acceleration: false
+    imu1_angular_velocity_rejection_threshold: 0.05
 
-    # imu0_remove_gravitational_acceleration: false
-
-    # imu1: "/camera/realsense2_camera/accel/corrected"
-    # imu1_config: [false, false, false,  # Don't use orientation
-    #               false, false, false,  # Don't use angular velocity
-    #               false, false, false,  # Don't use linear velocity
-    #               false, false, false,  # Don't use orientation velocity
-    #               false,  false,  true]  # Use linear acceleration x, y, z,
-    # imu1_differential: false
-    # imu1_remove_gravitational_acceleration: false
-    # imu1_linear_acceleration_rejection_threshold: 0.8
-
+    imu0: "/camera/realsense2_camera/accel/corrected"
+    imu0_config: [false, false, false,  # Don't use orientation
+                  false, false, false,  # Don't use angular velocity
+                  false, false, false,  # Don't use linear velocity
+                  false, false, false,  # Don't use orientation velocity
+                  true,  true,  true]  # Use linear acceleration x, y, z,
+    imu0_differential: false
+    imu0_remove_gravitational_acceleration: false
+    imu0_linear_acceleration_rejection_threshold: 0.8
 
