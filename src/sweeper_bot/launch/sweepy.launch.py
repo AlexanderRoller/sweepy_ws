@@ -147,4 +147,5 @@ def generate_launch_description():
         joint_state_broadcaster_spawner,
         robot_controller_spawner,
         twist_mux,
+        laser_scan,
     ])
