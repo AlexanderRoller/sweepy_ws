@@ -124,6 +124,16 @@ def generate_launch_description():
             remappings=[('/cmd_vel_out','/diffbot_base_controller/cmd_vel_unstamped')]
         )
     
+    laserscan_params = os.path.join(get_package_share_directory('sweeper_bot'), 'config', 'laserscan_params.yaml')
+    laser_scan =Node(
+            package='depthimage_to_laserscan',
+            executable='depthimage_to_laserscan_node',
+            name='depthimage_to_laserscan',
+            remappings=[('depth', '/camera/realsense2_camera/depth/image_rect_raw'),
+                        ('depth_camera_info', '/camera/realsense2_camera/depth/camera_info')],
+            parameters=[laserscan_params]
+        ) 
+
     return LaunchDescription([
         DeclareLaunchArgument(name='model', default_value=default_model_path, description='Absolute path to robot urdf file'),
         DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path, description='Absolute path to rviz config file'),
