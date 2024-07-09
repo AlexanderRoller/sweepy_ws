@@ -7,9 +7,9 @@ depthimage_to_laserscan_node:
     use_inf: true  # Use inf for out of range values
     inf_epsilon: 1.0  # Small value added to infinity values to distinguish them
     scan_height: 1  # Number of rows in the depth image to use for the scan
-    angle_min: -1.047  # Minimum angle of the laser scan [rad], approximate -60 degrees
-    angle_max: 1.047  # Maximum angle of the laser scan [rad], approximate 60 degrees
-    angle_increment: 0.00183  # Angle increment for the laser scan [rad], based on depth image resolution
+    angle_min: -.759  # Minimum angle of the laser scan [rad], approximate -43.5 degrees
+    angle_max: .759  # Maximum angle of the laser scan [rad], approximate 60 degrees
+    angle_increment: 0.00119  # Angle increment for the laser scan [rad], based on depth image resolution
     depth_img_topic: "/camera/realsense2_camera/depth/image_rect_raw"  # Input topic for the depth image
     scan_topic: "/scan"  # Output topic for the laser scan
     queue_size: 10  # Queue size for incoming message

@@ -23,6 +23,7 @@ install(
 )
 
 install(PROGRAMS
+  scripts/gamepad_control.py
   scripts/imu_data_corrector.py
   DESTINATION lib/${PROJECT_NAME}) 
 
