@@ -26,7 +26,7 @@
     <joint name="camera_joint" type="fixed">
         <parent link="chassis"/>
         <child link="camera_link"/>
-        <origin xyz="${chassis_length} 0 ${chassis_height/2}" rpy="0 0 0"/>
+        <origin xyz="${chassis_length} 0 ${chassis_height/3}" rpy="0 0 0"/>
     </joint>
 
     <link name="camera_depth_frame"/>
