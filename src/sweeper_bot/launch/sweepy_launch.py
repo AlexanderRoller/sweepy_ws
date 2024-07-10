@@ -13,11 +13,7 @@ def generate_launch_description():
     pkg_share = FindPackageShare(package='sweeper_bot').find('sweeper_bot')
     default_model_path = os.path.join(pkg_share, 'src', 'description', 'robot.urdf.xacro')
     default_rviz_config_path = os.path.join(pkg_share, 'config', 'urdf_config.rviz')
-    gazebo_params_file = os.path.join(get_package_share_directory('sweeper_bot'), 'config', 'gazebo_params.yaml')
     realsense_params_file = os.path.join(get_package_share_directory('sweeper_bot'), 'config', 'realsense_params.yaml')
-    nav2_params_file = os.path.join(get_package_share_directory('sweeper_bot'), 'config', 'costmap_params.yaml')
-    nav2_bringup_dir = get_package_share_directory('nav2_bringup')
-    bringup_launch_file = os.path.join(nav2_bringup_dir, 'launch', 'bringup_launch.py')
     ekf_params_file = os.path.join(get_package_share_directory('sweeper_bot'), 'config', 'ekf_params.yaml')
 
     robot_description_content = Command(['xacro ', LaunchConfiguration('model')])
@@ -63,11 +59,6 @@ def generate_launch_description():
         executable='imu_data_corrector.py',
         name='imu_data_corrector',
         output='screen'
-    )
-
-    nav2 = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(bringup_launch_file),
-        launch_arguments={'params_file': nav2_params_file}.items()
     )
 
     ekf_node = Node(
@@ -141,7 +132,7 @@ def generate_launch_description():
         rsp,
         rviz_node,
         realsense_node,
-        #ekf_node,
+        ekf_node,
         imu_corrector_node,
         ros2_control_node,
         joint_state_broadcaster_spawner,
