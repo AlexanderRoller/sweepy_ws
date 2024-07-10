@@ -14,7 +14,7 @@ class ObstacleDetectionNode(Node):
     def __init__(self):
         super().__init__('obstacle_detection_node')
         self.bridge = CvBridge()
-        self.create_subscription(Image, '/camera/realsense2_camera/depth/image_rect_raw', self.depth_callback, 10)
+        self.create_subscription(Image, '/camera/camera/depth/image_rect_raw', self.depth_callback, 10)
         self.pub_cmd_vel = self.create_publisher(Twist, 'cmd_vel', 10)
 
         # Set up logging
@@ -22,7 +22,7 @@ class ObstacleDetectionNode(Node):
         self.logger = logging.getLogger()
 
         # Set up periodic timer for obstacles
-        self.obstacle_check_timer = self.create_timer(1.0, self.check_for_obstacles)
+        self.obstacle_check_timer = self.create_timer(3.0, self.check_for_obstacles)
 
         # Placeholder for the latest depth image
         self.latest_depth_image = None
@@ -31,6 +31,8 @@ class ObstacleDetectionNode(Node):
         self.display_thread = threading.Thread(target=self.display_images)
         self.display_thread.daemon = True
         self.display_thread.start()
+
+        self.moving = False 
 
     def depth_callback(self, msg):
         try:
@@ -42,6 +44,8 @@ class ObstacleDetectionNode(Node):
     def check_for_obstacles(self):
         if self.latest_depth_image is None:
             return
+        
+        self.moving = True 
 
         # Split the depth image into left and right parts
         height, width = self.latest_depth_image.shape
@@ -81,22 +85,26 @@ class ObstacleDetectionNode(Node):
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Forward')
         self.logger.info('Command: Move forward')
+        threading.Timer(3.0, self.finish_movement).start()
 
     def turn_left(self):
         cmd = Twist()
         cmd.linear.x = 0.0
-        cmd.angular.z = 1.0
+        cmd.angular.z = 0.5
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Left')
         self.logger.info('Command: Turn left')
+        threading.Timer(3.0, self.finish_movement).start()
+
        
     def turn_right(self):
         cmd = Twist()
         cmd.linear.x = 0.0
-        cmd.angular.z = -1.0
+        cmd.angular.z = -0.5
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Right')
         self.logger.info('Command: Turn right')
+        threading.Timer(3.0, self.finish_movement).start()
        
     def stop(self):
         cmd = Twist()
@@ -105,10 +113,14 @@ class ObstacleDetectionNode(Node):
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Stop')
         self.logger.info('Command: Stop')
+        threading.Timer(3.0, self.finish_movement).start()
 
     def stop_and_turn_right(self):
         self.stop()
-        threading.Timer(1.0, self.turn_right).start()
+        threading.Timer(3.0, self.turn_right).start()
+
+    def finish_movement(self):
+        self.moving = False 
 
     def display_images(self):
         while True:
