@@ -24,6 +24,7 @@ install(
 
 install(PROGRAMS
   scripts/imu_data_corrector.py
+  scripts/obstacle_detection_node.py
   DESTINATION lib/${PROJECT_NAME}) 
 
 if(BUILD_TESTING)

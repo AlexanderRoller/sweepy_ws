@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
@@ -12,7 +14,7 @@ class ObstacleDetectionNode(Node):
     def __init__(self):
         super().__init__('obstacle_detection_node')
         self.bridge = CvBridge()
-        self.create_subscription(Image, '/camera/camera/depth/image_rect_raw', self.depth_callback, 10)
+        self.create_subscription(Image, '/camera/realsense2_camera/depth/image_rect_raw', self.depth_callback, 10)
         self.pub_cmd_vel = self.create_publisher(Twist, 'cmd_vel', 10)
 
         # Set up logging
