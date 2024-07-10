@@ -76,7 +76,7 @@ class ObstacleDetectionNode(Node):
 
     def move_forward(self):
         cmd = Twist()
-        cmd.linear.x = 1.0
+        cmd.linear.x = 0.5
         cmd.angular.z = 0.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Forward')
