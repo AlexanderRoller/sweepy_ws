@@ -135,13 +135,13 @@ controller_server:
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: True
-      min_vel_x: 0.0
+      min_vel_x: .6
       min_vel_y: 0.0
-      max_vel_x: 1.0  # Adjust to match your robot's max velocity
+      max_vel_x: 1.5  # Adjust to match your robot's max velocity
       max_vel_y: 0.0
-      max_vel_theta: 1.0
-      min_speed_xy: 0.0
-      max_speed_xy: 1.0  # Adjust to match your robot's max velocity
+      max_vel_theta: 1.5
+      min_speed_xy: .6
+      max_speed_xy: 1.5  # Adjust to match your robot's max velocity
       min_speed_theta: 0.0
       acc_lim_x: 2.5
       acc_lim_y: 0.0
@@ -248,7 +248,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        inflation_radius: 0.45
       always_send_full_costmap: True
 
 map_server:
