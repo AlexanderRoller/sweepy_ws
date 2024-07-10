@@ -17,23 +17,19 @@ ekf_filter_node:
     #             vx, vy, vz, 
     #             vroll, vpitch, vyaw, 
     #             ax, ay, az
-    pose0: "/diffbot_base_controller/odom"
-    pose0_config: [true, true, false,
-                   false, false, false,
-                   false, false, false,
-                   false, false, false,
-                   false, false, false,]
-    pose0_queue_size: 5
-    pose0_rejection_threshold: 2.0
-
-    twist0: "/diffbot_base_controller/odom"
-    twist0_config: [false, false, false,
-                   false, false, false,
+    odom0: "/diffbot_base_controller/odom"
+    odom0_config: [true, true, false,
+                   false, false, true,
                    true, true, true,
-                   false, false, false,
+                   false, false, true,
                    false, false, false,]
-    twist0_queue_size: 5
-    twist0_rejection_threshold: 2.0
+    odom0_queue_size: 10
+    odom0_nodelay: false
+    odom0_differential: false
+    odom0_relative: false
+    odom0_pose_use_child_frame: false
+    odom0_pose_rejection_threshold: 5.0
+    odom0_twist_rejection_threshold: 1.0
 
     imu0: "/camera/realsense2_camera/accel/corrected"
     imu0_config: [false, false, false,  # Don't use orientation
@@ -57,8 +53,8 @@ ekf_filter_node:
     imu1_twist_rejection_threshold: 0.8
     imu1_angular_velocity_rejection_threshold: 0.05
 
-    use_control: true
-    stamped_control: false
+    # use_control: true
+    # stamped_control: false
 
 
 
