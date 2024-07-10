@@ -76,7 +76,7 @@ class ObstacleDetectionNode(Node):
 
     def move_forward(self):
         cmd = Twist()
-        cmd.linear.x = 0.5
+        cmd.linear.x = 1.0
         cmd.angular.z = 0.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Forward')
@@ -85,7 +85,7 @@ class ObstacleDetectionNode(Node):
     def turn_left(self):
         cmd = Twist()
         cmd.linear.x = 0.0
-        cmd.angular.z = 0.5
+        cmd.angular.z = 1.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Left')
         self.logger.info('Command: Turn left')
@@ -93,7 +93,7 @@ class ObstacleDetectionNode(Node):
     def turn_right(self):
         cmd = Twist()
         cmd.linear.x = 0.0
-        cmd.angular.z = -0.5
+        cmd.angular.z = -1.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Right')
         self.logger.info('Command: Turn right')
