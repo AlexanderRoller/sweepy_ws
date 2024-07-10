@@ -108,7 +108,7 @@ class ObstacleDetectionNode(Node):
 
     def stop_and_turn_right(self):
         self.stop()
-        threading.Timer(8.0, self.turn_right).start()
+        threading.Timer(3.0, self.turn_right).start()
 
     def display_images(self):
         while True:
@@ -118,8 +118,8 @@ class ObstacleDetectionNode(Node):
             height, width = self.latest_depth_image.shape
             left_image = self.latest_depth_image[:, :width//2]
             right_image = self.latest_depth_image[:, width//2:]
-
             left_normalized = cv2.normalize(left_image, None, 0, 255, cv2.NORM_MINMAX)
+
             left_normalized = np.uint8(left_normalized)
             left_colormap = cv2.applyColorMap(left_normalized, cv2.COLORMAP_JET)
 
