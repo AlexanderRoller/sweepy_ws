@@ -15,6 +15,7 @@ class ObstacleDetectionNode(Node):
         super().__init__('obstacle_detection_node')
         self.bridge = CvBridge()
         self.create_subscription(Image, '/camera/realsense2_camera/depth/image_rect_raw', self.depth_callback, 10)
+        #self.create_subscription(Image, '/camera/camera/depth/image_rect_raw', self.depth_callback, 10)
         self.pub_cmd_vel = self.create_publisher(Twist, 'cmd_vel', 10)
 
         # Set up logging
@@ -57,7 +58,7 @@ class ObstacleDetectionNode(Node):
             valid_region_depths = region[region > 0]
             if valid_region_depths.size > 0:
                 min_region_depth = np.min(valid_region_depths)
-                if min_region_depth < 300:
+                if min_region_depth < 450:
                     obstacles[region_name] = True
                     self.get_logger().info(f'Obstacle detected in {region_name} region with depth {min_region_depth} mm.')
         
@@ -72,7 +73,7 @@ class ObstacleDetectionNode(Node):
         elif obstacles['left'] and obstacles['right']:
             self.get_logger().info('Obstacles detected on both sides. Stop')
             #self.logger.info('Obstacles detected on both sides. Stop')
-            self.stop_and_turn_right()
+            self.stop_and_turn_back()
         else:
             self.get_logger().info('No obstacles detected, performing random movement.')
             #self.logger.info('No obstacles detected, performing random movement.')
@@ -110,14 +111,25 @@ class ObstacleDetectionNode(Node):
         self.get_logger().info('Command: Stop')
         #self.logger.info('Command: Stop')
 
+    def move_backward(self):
+        cmd = Twist()
+        cmd.linear.x = -0.7 
+        cmd.angular.z = 0.0
+        self.pub_cmd_vel.publish(cmd)
+        self.get_logger().info('Command: Move Backward')
+        #self.logger.info('Command: Move Backward')
+        
+
     def publish_cmd(self, cmd):
         if cmd.linear.x != self.prev_cmd.linear.x or cmd.angular.z != self.prev_cmd.angular.z:
             self.prev_cmd = cmd 
             self.pub_cmd_vel.publish(cmd)
 
-    def stop_and_turn_right(self):
+    def stop_and_turn_back(self):
         self.stop()
-        threading.Timer(3.0, self.turn_right).start()
+        threading.Timer(3.0, self.move_backward).start()
+        threading.Timer(6.0, self.turn_right).start()
+        threading.Timer(9.0, self.move_forward).start()
 
     def display_images(self):
         while True:
