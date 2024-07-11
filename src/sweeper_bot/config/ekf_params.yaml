@@ -28,8 +28,8 @@ ekf_filter_node:
     odom0_differential: false
     odom0_relative: false
     odom0_pose_use_child_frame: false
-    odom0_pose_rejection_threshold: 5.0
-    odom0_twist_rejection_threshold: 1.0
+    odom0_pose_rejection_threshold: .1
+    odom0_twist_rejection_threshold: .1
 
     imu0: "/camera/realsense2_camera/accel/corrected"
     imu0_config: [false, false, false,  # Don't use orientation
@@ -40,7 +40,7 @@ ekf_filter_node:
     imu0_differential: false
     imu0_queue_size: 5
     imu0_remove_gravitational_acceleration: false
-    imu0_linear_acceleration_rejection_threshold: 0.8
+    imu0_linear_acceleration_rejection_threshold: 0.05
 
     imu1: "/camera/realsense2_camera/gyro/corrected"
     imu1_config: [false, false, false,  # Don't use orientation
@@ -50,7 +50,7 @@ ekf_filter_node:
                   false, false, false]  # Don't use linear acceleration
     imu1_queue_size: 5
     imu1_remove_gravitational_acceleration: false
-    imu1_twist_rejection_threshold: 0.8
+    imu1_twist_rejection_threshold: 0.1
     imu1_angular_velocity_rejection_threshold: 0.05
 
     # use_control: true
