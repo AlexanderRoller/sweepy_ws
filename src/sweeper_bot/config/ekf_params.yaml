@@ -24,8 +24,8 @@ ekf_filter_node:
     odom0_differential: false
     odom0_relative: false
     odom0_pose_use_child_frame: false
-    odom0_pose_rejection_threshold: 0.5  # Adjusted to 0.05 for pose rejection threshold
-    odom0_twist_rejection_threshold: 0.5  # Adjusted to 0.05 for twist rejection threshold
+    odom0_pose_rejection_threshold: 0.55  # Adjusted to 0.05 for pose rejection threshold
+    odom0_twist_rejection_threshold: 0.55  # Adjusted to 0.05 for twist rejection threshold
 
     # RealSense D455 IMU - Linear Acceleration
     imu0: "/camera/realsense2_camera/accel/corrected"
@@ -37,7 +37,7 @@ ekf_filter_node:
     imu0_differential: false
     imu0_queue_size: 5
     imu0_remove_gravitational_acceleration: false
-    imu0_linear_acceleration_rejection_threshold: 0.2  # Adjusted to 0.02 for linear acceleration rejection threshold
+    imu0_linear_acceleration_rejection_threshold: 0.25  # Adjusted to 0.02 for linear acceleration rejection threshold
 
     # RealSense D455 IMU - Angular Velocity
     imu1: "/camera/realsense2_camera/gyro/corrected"
@@ -48,8 +48,8 @@ ekf_filter_node:
                   false, false, false]   # Don't use linear acceleration
     imu1_queue_size: 5
     imu1_remove_gravitational_acceleration: false
-    imu1_twist_rejection_threshold: 0.8  # Adjusted to 0.08 for twist rejection threshold
-    imu1_angular_velocity_rejection_threshold: 0.3  # Adjusted to 0.03 for angular velocity rejection threshold
+    imu1_twist_rejection_threshold: 0.85  # Adjusted to 0.08 for twist rejection threshold
+    imu1_angular_velocity_rejection_threshold: 0.35  # Adjusted to 0.03 for angular velocity rejection threshold
 
     # use_control: true
     # stamped_control: false
