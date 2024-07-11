@@ -58,7 +58,7 @@ class ObstacleDetectionNode(Node):
             valid_region_depths = region[region > 0]
             if valid_region_depths.size > 0:
                 min_region_depth = np.min(valid_region_depths)
-                if min_region_depth < 450:
+                if min_region_depth < 500:
                     obstacles[region_name] = True
                     self.get_logger().info(f'Obstacle detected in {region_name} region with depth {min_region_depth} mm.')
         
