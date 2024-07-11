@@ -113,36 +113,36 @@ controller_server:
   ros__parameters:
     use_sim_time: True
     controller_frequency: 20.0
-    min_x_velocity_threshold: 0.01  # Increase for better precision
-    min_y_velocity_threshold: 0.001
-    min_theta_velocity_threshold: 0.01  # Increase for better precision
-    failure_tolerance: 0.5  # Increase to allow more recovery attempts
+    min_x_velocity_threshold: 0.5  # Increased for higher minimum linear speed
+    min_y_velocity_threshold: 0.0
+    min_theta_velocity_threshold: 0.5  # Increased for higher minimum angular speed
+    failure_tolerance: 0.5
     progress_checker_plugin: "progress_checker"
     goal_checker_plugins: ["general_goal_checker"]
     controller_plugins: ["FollowPath"]
 
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 0.2  # Reduce for more frequent checks
+      required_movement_radius: 0.2
       movement_time_allowance: 10.0
 
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.15  # Increase precision
-      yaw_goal_tolerance: 0.1  # Increase precision
+      xy_goal_tolerance: 0.15
+      yaw_goal_tolerance: 0.1
 
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: True
-      min_vel_x: .6
+      min_vel_x: 0.5  # Increased for higher minimum linear speed
       min_vel_y: 0.0
-      max_vel_x: 1.5  # Adjust to match your robot's max velocity
+      max_vel_x: 2.0
       max_vel_y: 0.0
       max_vel_theta: 1.5
-      min_speed_xy: .6
-      max_speed_xy: 1.5  # Adjust to match your robot's max velocity
-      min_speed_theta: 0.0
+      min_speed_xy: 0.5  # Increased for higher minimum speed
+      max_speed_xy: 2.0
+      min_speed_theta: 0.5  # Increased for higher minimum angular speed
       acc_lim_x: 2.5
       acc_lim_y: 0.0
       acc_lim_theta: 3.2
@@ -157,7 +157,7 @@ controller_server:
       angular_granularity: 0.025
       transform_tolerance: 0.2
       xy_goal_tolerance: 0.25
-      trans_stopped_velocity: 0.1  # Reduce for better stop detection
+      trans_stopped_velocity: 0.1
       short_circuit_trajectory_evaluation: True
       stateful: True
       critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
