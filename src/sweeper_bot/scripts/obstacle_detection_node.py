@@ -15,7 +15,6 @@ class ObstacleDetectionNode(Node):
         super().__init__('obstacle_detection_node')
         self.bridge = CvBridge()
         self.create_subscription(Image, '/camera/realsense2_camera/depth/image_rect_raw', self.depth_callback, 10)
-        #self.create_subscription(Image, '/camera/camera/depth/image_rect_raw', self.depth_callback, 10)
         self.pub_cmd_vel = self.create_publisher(Twist, 'cmd_vel', 10)
 
         # Set up logging
@@ -23,7 +22,7 @@ class ObstacleDetectionNode(Node):
         #self.logger = logging.getLogger()
 
         # Set up periodic timer for obstacles
-        self.obstacle_check_timer = self.create_timer(0.5, self.check_for_obstacles)
+        self.obstacle_check_timer = self.create_timer(0.25, self.check_for_obstacles)
 
         # Placeholder for the latest depth image
         self.latest_depth_image = None
@@ -35,6 +34,9 @@ class ObstacleDetectionNode(Node):
 
         # Placeholder for the previous command 
         self.prev_cmd = Twist()
+        self.left_count = 0
+        self.right_count = 0
+        self.both_count = 0 
 
     def depth_callback(self, msg):
         try:
@@ -63,22 +65,36 @@ class ObstacleDetectionNode(Node):
                     self.get_logger().info(f'Obstacle detected in {region_name} region with depth {min_region_depth} mm.')
         
         if obstacles['left'] and not obstacles['right']:
-            self.get_logger().info('Obstacle detected on the left, turning right.')
-            #self.logger.info('Obstacle detected on the left, turning right.')
-           # self.obstacle_left = True 
-            self.turn_right()
+            self.left_count += 1 
+            self.right_count = 0
+            self.both_count = 0 
+            if self.left_count >= 3:
+                self.get_logger().info('Obstacle detected on the left, turning right.')
+                #self.logger.info('Obstacle detected on the left, turning right.')
+                self.turn_right()
+                
         elif obstacles['right'] and not obstacles['left']:
-            self.get_logger().info('Obstacle detected on the right, turning left.')
-            #self.logger.info('Obstacle detected on the right, turning left.')
-           # self.obstacle_right = True
-            self.turn_left()
+            self.right_count += 1
+            self.left_count = 0
+            self.both_count = 0 
+            if self.right_count >= 3:
+                self.get_logger().info('Obstacle detected on the right, turning left.')
+                #self.logger.info('Obstacle detected on the right, turning left.')
+                self.turn_left()
+        
         elif obstacles['left'] and obstacles['right']:
-            self.get_logger().info('Obstacles detected on both sides. Stop')
-            #self.logger.info('Obstacles detected on both sides. Stop')
-           # self.obstacle_left = True
-            #self.obstacle_right = True
-            self.move_backward_and_turn_right()
+            self.both_count += 1
+            self.left_count = 0 
+            self.right_count = 0 
+            if self.both_count >= 3:
+                self.get_logger().info('Obstacles detected on both sides. Stop')
+                #self.logger.info('Obstacles detected on both sides. Stop')
+                self.move_backward_and_turn_right()
+            
         else:
+            self.both_count = 0
+            self.left_count = 0
+            self.right_count = 0 
             self.get_logger().info('No obstacles detected, performing random movement.')
             #self.logger.info('No obstacles detected, performing random movement.')
             self.move_forward()
@@ -94,18 +110,25 @@ class ObstacleDetectionNode(Node):
     def turn_left(self):
         cmd = Twist()
         cmd.linear.x = 0.0
-        cmd.angular.z = 0.6
+        cmd.angular.z = 1.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Left')
         #self.logger.info('Command: Turn left')
+        # reset counter after action 
+        self.left_count = 0 
+        self.right_count = 0 
+        self.both_count = 0 
        
     def turn_right(self):
         cmd = Twist()
         cmd.linear.x = 0.0
-        cmd.angular.z = -0.6
+        cmd.angular.z = -1.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Right')
         #self.logger.info('Command: Turn right')
+        self.left_count = 0 
+        self.right_count = 0 
+        self.both_count = 0 
        
     def stop(self):
         cmd = Twist()
@@ -122,6 +145,7 @@ class ObstacleDetectionNode(Node):
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Backward')
         #self.logger.info('Command: Move Backward')
+
     def spot_turn_right(self):
         cmd = Twist()
         cmd.linear.x = 0.0
@@ -134,6 +158,9 @@ class ObstacleDetectionNode(Node):
         threading.Timer(0.5, self.move_backward).start()
         threading.Timer(1.0, self.spot_turn_right).start()
         threading.Timer(3.5, self.move_forward).start()
+        self.both_count = 0 
+        self.left_count = 0 
+        self.right_count = 0 
 
     def publish_cmd(self, cmd):
         if cmd.linear.x != self.prev_cmd.linear.x or cmd.angular.z != self.prev_cmd.angular.z:
