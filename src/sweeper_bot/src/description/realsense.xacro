@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <robot name="sweeper" xmlns:xacro="http://ros.org/wiki/xacro">
 
+    <xacro:property name="realsense_offset_z" value=".210"/>    <!--8.25" (center of realsense to chasis low point)-->
+
     <link name="camera_link">
     <visual>
         <origin xyz="${.025/2} 0 0" rpy="0 0 0"/>
