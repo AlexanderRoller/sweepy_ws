@@ -65,18 +65,18 @@ class ObstacleDetectionNode(Node):
         if obstacles['left'] and not obstacles['right']:
             self.get_logger().info('Obstacle detected on the left, turning right.')
             #self.logger.info('Obstacle detected on the left, turning right.')
-            self.obstacle_left = True 
+           # self.obstacle_left = True 
             self.turn_right()
         elif obstacles['right'] and not obstacles['left']:
             self.get_logger().info('Obstacle detected on the right, turning left.')
             #self.logger.info('Obstacle detected on the right, turning left.')
-            self.obstacle_right = True
+           # self.obstacle_right = True
             self.turn_left()
         elif obstacles['left'] and obstacles['right']:
             self.get_logger().info('Obstacles detected on both sides. Stop')
             #self.logger.info('Obstacles detected on both sides. Stop')
-            self.obstacle_left = True
-            self.obstacle_right = True
+           # self.obstacle_left = True
+            #self.obstacle_right = True
             self.move_backward_and_turn_right()
         else:
             self.get_logger().info('No obstacles detected, performing random movement.')
@@ -158,10 +158,10 @@ class ObstacleDetectionNode(Node):
             right_normalized = np.uint8(right_normalized)
             right_colormap = cv2.applyColorMap(right_normalized, cv2.COLORMAP_JET)
 
-            if self.obstacle_left:
-                cv2.putText(left_colormap, 'Obstacle', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
-            if self.obstacle_right:
-                cv2.putText(right_colormap, 'Obstacle', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+            #if self.obstacle_left:
+             #   cv2.putText(left_colormap, 'Obstacle', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+            #if self.obstacle_right:
+             #   cv2.putText(right_colormap, 'Obstacle', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
 
             cv2.imshow('Left Depth Image', left_colormap)
             cv2.imshow('Right Depth Image', right_colormap)
