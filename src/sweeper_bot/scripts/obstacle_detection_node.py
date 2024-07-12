@@ -66,12 +66,12 @@ class ObstacleDetectionNode(Node):
             self.get_logger().info('Obstacle detected on the left, turning right.')
             #self.logger.info('Obstacle detected on the left, turning right.')
             self.obstacle_left = True 
-            self.full_turn_right()
+            self.turn_right()
         elif obstacles['right'] and not obstacles['left']:
             self.get_logger().info('Obstacle detected on the right, turning left.')
             #self.logger.info('Obstacle detected on the right, turning left.')
             self.obstacle_right = True
-            self.full_turn_left()
+            self.turn_left()
         elif obstacles['left'] and obstacles['right']:
             self.get_logger().info('Obstacles detected on both sides. Stop')
             #self.logger.info('Obstacles detected on both sides. Stop')
@@ -94,7 +94,7 @@ class ObstacleDetectionNode(Node):
     def turn_left(self):
         cmd = Twist()
         cmd.linear.x = 0.0
-        cmd.angular.z = 1.0
+        cmd.angular.z = 0.6
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Left')
         #self.logger.info('Command: Turn left')
@@ -102,7 +102,7 @@ class ObstacleDetectionNode(Node):
     def turn_right(self):
         cmd = Twist()
         cmd.linear.x = 0.0
-        cmd.angular.z = -1.0
+        cmd.angular.z = -0.6
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Right')
         #self.logger.info('Command: Turn right')
@@ -117,7 +117,7 @@ class ObstacleDetectionNode(Node):
 
     def move_backward(self):
         cmd = Twist()
-        cmd.linear.x = -0.7 
+        cmd.linear.x = -0.7
         cmd.angular.z = 0.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Backward')
@@ -128,23 +128,6 @@ class ObstacleDetectionNode(Node):
         cmd.angular.z = -2.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Spot turning to right')
-
-    def spot_turn_left(self):
-        cmd = Twist()
-        cmd.linear.x = 0.0
-        cmd.angular.z = 2.0
-        self.pub_cmd_vel.publish(cmd)
-        self.get_logger().info('Command: Spot turning to left')
-        
-    def full_turn_right(self):
-        self.stop()
-        threading.Timer(0.5, self.spot_turn_right).start()
-        threading.Timer(3.0, self.move_forward).start()
-        
-    def full_turn_left(self):
-        self.stop()
-        threading.Timer(0.5, self.spot_turn_left).start()
-        threading.Timer(3.0, self.move_forward).start()
 
     def move_backward_and_turn_right(self):
         self.stop()
