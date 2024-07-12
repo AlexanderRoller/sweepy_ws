@@ -118,6 +118,12 @@ class ObstacleDetectionNode(Node):
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Backward')
         #self.logger.info('Command: Move Backward')
+    def spot_turn_right(self):
+        cmd = Twist()
+        cmd.linear.x = 0.0
+        cmd.angular.z = -2.0
+        self.pub_cmd_vel.publish(cmd)
+        self.get_logger().info('Command: Spot turning to right')
         
 
     def publish_cmd(self, cmd):
@@ -127,9 +133,9 @@ class ObstacleDetectionNode(Node):
 
     def stop_and_turn_back(self):
         self.stop()
-        threading.Timer(3.0, self.move_backward).start()
-        threading.Timer(6.0, self.turn_right).start()
-        threading.Timer(9.0, self.move_forward).start()
+        threading.Timer(1.5, self.move_backward).start()
+        threading.Timer(3.0, self.spot_turn_right).start()
+        threading.Timer(4.5, self.move_forward).start()
 
     def display_images(self):
         while True:
