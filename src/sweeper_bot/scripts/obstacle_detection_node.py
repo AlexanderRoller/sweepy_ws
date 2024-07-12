@@ -11,8 +11,8 @@ from cv_bridge import CvBridge, CvBridgeError
 import threading
 
 class ObstacleDetectionNode(Node):
-    def _init_(self):
-        super()._init_('obstacle_detection_node')
+    def __init__(self):
+        super().__init__('obstacle_detection_node')
         self.bridge = CvBridge()
         self.create_subscription(Image, '/camera/realsense2_camera/depth/image_rect_raw', self.depth_callback, 10)
         #self.create_subscription(Image, '/camera/camera/depth/image_rect_raw', self.depth_callback, 10)
