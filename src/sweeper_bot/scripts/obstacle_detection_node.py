@@ -2,110 +2,147 @@
 
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 import numpy as np
-import cv2
-from cv_bridge import CvBridge, CvBridgeError
-#import logging
+import logging
 import threading
+import serial 
+import time 
 
 class ObstacleDetectionNode(Node):
     def __init__(self):
         super().__init__('obstacle_detection_node')
-        self.bridge = CvBridge()
-        self.create_subscription(Image, '/camera/realsense2_camera/depth/image_rect_raw', self.depth_callback, 10)
+        self.create_subscription(LaserScan, '/scan', self.lidar_callback, 10)
         self.pub_cmd_vel = self.create_publisher(Twist, 'cmd_vel', 10)
 
         # Set up logging
-        #logging.basicConfig(filename='robot_log.txt', level=logging.INFO, format='%(asctime)s - %(message)s')
-        #self.logger = logging.getLogger()
+        logging.basicConfig(filename='robot_log.txt', level=logging.INFO, format='%(asctime)s - %(message)s')
+        self.logger = logging.getLogger()
 
         # Set up periodic timer for obstacles
         self.obstacle_check_timer = self.create_timer(0.25, self.check_for_obstacles)
 
-        # Placeholder for the latest depth image
-        self.latest_depth_image = None
-
-        # Thread to handle image display
-        self.display_thread = threading.Thread(target=self.display_images)
-        self.display_thread.daemon = True
-        self.display_thread.start()
+        # Placeholder for the latest LiDAR scan data and heading data 
+        self.latest_scan_data = None
+        self.latest_heading = 0.0 
+        self.heading_lock = threading.Lock()
 
         # Placeholder for the previous command 
         self.prev_cmd = Twist()
-        self.left_count = 0
-        self.right_count = 0
+        self.desired_heading = None # store the desired heading 
+        
+        # Thread to handle heading data 
+        self.heading_thread = threading.Thread(target=self.read_heading)
+        self.heading_thread.daemon = True 
+        self.heading_thread.start()
+        
+        # Storing initial counts 
+        self.left_count = 0 
+        self.right_count = 0 
         self.both_count = 0 
 
-    def depth_callback(self, msg):
-        try:
-            # Convert ROS Image message to OpenCV image
-            self.latest_depth_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
-        except CvBridgeError as e:
-            self.get_logger().error(f'CvBridge Error: {e}')
+        # PID controller parameters for heading correction 
+        self.kp = 0.01
+        self.ki = 0.0
+        self.kd = 0.0 
+
+        self.heading_error_sum = 0.0 
+        self.last_heading_error = 0.0 
+        self.last_time = time.time()
+
+    def lidar_callback(self, msg):
+        # Store the latest scan data 
+        self.latest_scan_data = msg 
 
     def check_for_obstacles(self):
-        if self.latest_depth_image is None:
+        if self.latest_scan_data is None:
             return
 
-        # Split the depth image into left and right parts
-        height, width = self.latest_depth_image.shape
-        left_image = self.latest_depth_image[:, :width//2]
-        right_image = self.latest_depth_image[:, width//2:]
+        ranges = np.array(self.latest_scan_data.ranges)
+        ranges[ranges == 0] = np.inf
+
+        # Split the ranges into left and right parts 
+        half_index = len(ranges) // 2 
+        left_ranges = ranges[:half_index]
+        right_ranges = ranges[half_index:]
 
         obstacles = {'left': False, 'right': False}
 
-        for region_name, region in {'left': left_image, 'right': right_image}.items():
-            valid_region_depths = region[region > 0]
-            if valid_region_depths.size > 0:
-                min_region_depth = np.min(valid_region_depths)
-                if min_region_depth < 500:
-                    obstacles[region_name] = True
-                    self.get_logger().info(f'Obstacle detected in {region_name} region with depth {min_region_depth} mm.')
-        
+        min_left = np.min(left_ranges)
+        min_right = np.min(right_ranges)
+
+        if min_left < 0.5: # here 0.5 is the obstacle threshold 
+            obstacles['left'] = True 
+            self.get_logger().info(f'Obstacle detected in left region with range {min_left} meters.')
+
+        if min_right < 0.5:
+            obstacles['right'] = True 
+            self.get_logger().info(f'Obstacle detected in right region with range {min_right} meters.')
+
+
         if obstacles['left'] and not obstacles['right']:
-            self.left_count += 1 
-            self.right_count = 0
+            self.left_count += 1
+            self.right_count = 0 
             self.both_count = 0 
             if self.left_count >= 3:
                 self.get_logger().info('Obstacle detected on the left, turning right.')
-                #self.logger.info('Obstacle detected on the left, turning right.')
+                self.logger.info('Obstacle detected on the left, turning right.')
                 self.turn_right()
-                
+            
         elif obstacles['right'] and not obstacles['left']:
-            self.right_count += 1
-            self.left_count = 0
+            self.right_count += 1 
+            self.left_count = 0 
             self.both_count = 0 
             if self.right_count >= 3:
                 self.get_logger().info('Obstacle detected on the right, turning left.')
-                #self.logger.info('Obstacle detected on the right, turning left.')
+                self.logger.info('Obstacle detected on the right, turning left.')
                 self.turn_left()
-        
+            
         elif obstacles['left'] and obstacles['right']:
-            self.both_count += 1
-            self.left_count = 0 
+            self.both_count += 1 
             self.right_count = 0 
+            self.left_count = 0 
             if self.both_count >= 3:
-                self.get_logger().info('Obstacles detected on both sides. Stop')
-                #self.logger.info('Obstacles detected on both sides. Stop')
+                self.get_logger().info('Obstacle detected on both sides, stop')
+                self.logger.info('Obstacles detected on both sides. Stop')
                 self.move_backward_and_turn_right()
             
         else:
-            self.both_count = 0
-            self.left_count = 0
+            self.both_count = 0 
+            self.left_count = 0 
             self.right_count = 0 
             self.get_logger().info('No obstacles detected, performing random movement.')
-            #self.logger.info('No obstacles detected, performing random movement.')
+            self.logger.info('No obstacles detected, performing random movement.')
             self.move_forward()
 
     def move_forward(self):
+        current_heading = self.get_current_heading()
+        if self.desired_heading is None:
+            self.desired_heading = current_heading 
+
+        heading_error = self.desired_heading - current_heading 
+
+        # PID control for heading correction 
+        current_time = time.time()
+        delta_time = current_time - self.last_time 
+
+        self.heading_error_sum += heading_error * delta_time 
+        heading_error_rate = (heading_error - self.last_heading_error) / delta_time 
+
+        angular_z = (self.kp * heading_error) + (self.ki * self.heading_error_sum) + (self.kd * heading_error_rate)
+
         cmd = Twist()
         cmd.linear.x = 0.7
-        cmd.angular.z = 0.0
+        cmd.angular.z = angular_z
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Forward')
-        #self.logger.info('Command: Move forward')
+        self.logger.info('Command: Move forward')
+
+
+        # Update for next iteration 
+        self.last_heading_error = heading_error 
+        self.last_time = current_time
 
     def turn_left(self):
         cmd = Twist()
@@ -113,8 +150,7 @@ class ObstacleDetectionNode(Node):
         cmd.angular.z = 1.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Left')
-        #self.logger.info('Command: Turn left')
-        # reset counter after action 
+        self.logger.info('Command: Turn left')
         self.left_count = 0 
         self.right_count = 0 
         self.both_count = 0 
@@ -125,7 +161,7 @@ class ObstacleDetectionNode(Node):
         cmd.angular.z = -1.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Right')
-        #self.logger.info('Command: Turn right')
+        self.logger.info('Command: Turn right')
         self.left_count = 0 
         self.right_count = 0 
         self.both_count = 0 
@@ -136,15 +172,15 @@ class ObstacleDetectionNode(Node):
         cmd.angular.z = 0.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Stop')
-        #self.logger.info('Command: Stop')
+        self.logger.info('Command: Stop')
 
     def move_backward(self):
         cmd = Twist()
-        cmd.linear.x = -0.7
+        cmd.linear.x = -0.7 
         cmd.angular.z = 0.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Backward')
-        #self.logger.info('Command: Move Backward')
+        self.logger.info('Command: Move Backward')
 
     def spot_turn_right(self):
         cmd = Twist()
@@ -152,6 +188,7 @@ class ObstacleDetectionNode(Node):
         cmd.angular.z = -2.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Spot turning to right')
+        self.logger.info('Command: Spot turning right')
 
     def move_backward_and_turn_right(self):
         self.stop()
@@ -167,39 +204,38 @@ class ObstacleDetectionNode(Node):
             self.prev_cmd = cmd 
             self.pub_cmd_vel.publish(cmd)
 
-    
-    def display_images(self):
-        while True:
-            if self.latest_depth_image is None:
-                continue
+    def read_heading (self):
+        port = "/dev/ttyUSB0"
+        baud_rate = 115200
+        try:
+            ser = serial.Serial(port, baud_rate, timeout=1)
+            self.get_logger().info(f"Connected to {port} at {baud_rate} baud rate.")
 
-            height, width = self.latest_depth_image.shape
-            left_image = self.latest_depth_image[:, :width//2]
-            right_image = self.latest_depth_image[:, width//2:]
-            left_normalized = cv2.normalize(left_image, None, 0, 255, cv2.NORM_MINMAX)
+            while True:
+                data = ser.readline().decode('utf-8').strip()
+                if data:
+                    self.latest_heading = float(data)
+                    self.get_logger().info(f'Heading: {self.latest_heading}')
 
-            left_normalized = np.uint8(left_normalized)
-            left_colormap = cv2.applyColorMap(left_normalized, cv2.COLORMAP_JET)
+        except serial.SerialException as e:
+            self.get_logger().error(f'Serial Error: {e}')
+        except KeyboardInterrupt:
+            self.get_logger().info('Exiting...')
+        finally:
+            if 'ser' in locals() and ser.is_open:
+                ser.close()
+                self.get_logger().info('Serial port closed')
 
-            right_normalized = cv2.normalize(right_image, None, 0, 255, cv2.NORM_MINMAX)
-            right_normalized = np.uint8(right_normalized)
-            right_colormap = cv2.applyColorMap(right_normalized, cv2.COLORMAP_JET)
+    def get_current_heading(self):
+        with self.heading_lock:
+            return self.latest_heading
 
-            #if self.obstacle_left:
-             #   cv2.putText(left_colormap, 'Obstacle', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
-            #if self.obstacle_right:
-             #   cv2.putText(right_colormap, 'Obstacle', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
-
-            cv2.imshow('Left Depth Image', left_colormap)
-            cv2.imshow('Right Depth Image', right_colormap)
-            cv2.waitKey(1)
 
 def main(args=None):
     rclpy.init(args=args)
     node = ObstacleDetectionNode()
     rclpy.spin(node)
     rclpy.shutdown()
-    cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     main()
