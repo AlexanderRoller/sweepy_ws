@@ -122,6 +122,20 @@ def generate_launch_description():
                         ('depth_camera_info', '/camera/realsense2_camera/depth/camera_info')],
             parameters=[laserscan_params]
         ) 
+    
+    sick_scan_pkg_prefix = get_package_share_directory('sick_scan_xd')
+    tim_launch_file_path = os.path.join(sick_scan_pkg_prefix, 'launch/sick_tim_7xx.launch')
+    
+    sick_node = Node(
+        package='sick_scan_xd',
+        executable='sick_generic_caller',
+        output= 'screen',
+        arguments=[
+            tim_launch_file_path,
+            'frame_id:=sick_lidar_frame',
+            'tf_base_frame_id:=base_link',
+        ]
+    )
 
     return LaunchDescription([
         DeclareLaunchArgument(name='model', default_value=default_model_path, description='Absolute path to robot urdf file'),
@@ -129,12 +143,13 @@ def generate_launch_description():
         #joint_state_publisher_node,
         rsp,
         rviz_node,
-        realsense_node,
-        ekf_node,
-        imu_corrector_node,
+        #realsense_node,
+        #ekf_node,
+        #imu_corrector_node,
         ros2_control_node,
         joint_state_broadcaster_spawner,
         robot_controller_spawner,
         twist_mux,
-        laser_scan,
+        #laser_scan,
+        sick_node,
     ])
