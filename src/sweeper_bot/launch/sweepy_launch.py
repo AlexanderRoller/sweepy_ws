@@ -133,7 +133,7 @@ def generate_launch_description():
         arguments=[
             tim_launch_file_path,
             'frame_id:=sick_lidar_frame',
-            'tf_base_frame_id:=base_link',
+            'tf_base_frame_id:=sick_lidar_frame',
         ]
     )
 
