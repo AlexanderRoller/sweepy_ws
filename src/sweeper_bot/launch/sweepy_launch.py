@@ -144,7 +144,7 @@ def generate_launch_description():
         rsp,
         rviz_node,
         #realsense_node,
-        #ekf_node,
+        ekf_node,
         #imu_corrector_node,
         ros2_control_node,
         joint_state_broadcaster_spawner,

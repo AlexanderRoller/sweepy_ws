@@ -15,8 +15,9 @@ Ensure you have the following installed:
 Clone the repository and navigate to the workspace:
 
 ```sh
-git clone https://github.com/froginyourthroat/sweepy_ws.git
+git clone https://github.com/AlexanderRoller/sweepy_ws.git
 cd sweepy_ws
+rosdep install --from-paths src --ignore-src -r -y
 colcon build
 source install/setup.bash
 ```
@@ -68,13 +69,13 @@ ros2 launch sweeper_bot obstacle_detection_launch.py
 ### `sweepy_launch.py`
 Contains configurations for initializing the robot stack, including sensors and drivers.
 
-### `online_async_launch.py`
+### `slam_toolbox-params.yaml`
 SLAM setup for creating and updating the map in real-time.
 
-### `navigation_launch.py`
+### `nav2_params.yaml`
 Nav2 setup for path planning and autonomous navigation.
 
-### `joystick_launch.py`
+### `joystick.yaml`
 Joystick controller setup for manual robot control.
 
 ### `obstacle_detection_launch.py`
@@ -84,12 +85,24 @@ Custom node configuration for obstacle detection.
 
 ### Running the Full Stack
 
-To launch the entire robot stack, SLAM, and navigation:
+To launch the entire robot stack, SLAM, and navigation individually:
 
 ```sh
 ros2 launch sweeper_bot sweepy_launch.py
 ros2 launch sweeper_bot online_async_launch.py
 ros2 launch sweeper_bot navigation_launch.py
+```
+
+To launch everything for nav2 and joystick control
+
+```sh
+ros2 launch sweeper_bot lex_dev_launch.py
+```
+
+To launch custom obstacle avoidance and control
+
+```sh
+ros2 launch sweeper_bot vednshee_dev_launch.py
 ```
 
 ### Manual Control
@@ -100,29 +113,9 @@ For manual control with a joystick, use the joystick launch file:
 ros2 launch sweeper_bot joystick_launch.py
 ```
 
-### Custom Obstacle Detection
-
-Enhance obstacle detection by launching the custom node:
-
-```sh
-ros2 launch sweeper_bot obstacle_detection_launch.py
-```
-
 ## Troubleshooting
 
 ### Common Issues
 
 - **Connection Issues**: Ensure all hardware is properly connected and configured.
 - **Dependency Errors**: Make sure all dependencies are installed and sourced.
-
-### Support
-
-For support, open an issue on the [GitHub repository](https://github.com/froginyourthroat/sweepy_ws/issues).
-
-## Contributing
-
-We welcome contributions! Please see our [contributing guidelines](https://github.com/froginyourthroat/sweepy_ws/blob/main/CONTRIBUTING.md) for more details.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/froginyourthroat/sweepy_ws/blob/main/LICENSE) file for details.
