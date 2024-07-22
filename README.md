@@ -15,8 +15,9 @@ Ensure you have the following installed:
 Clone the repository and navigate to the workspace:
 
 ```sh
-git clone https://github.com/froginyourthroat/sweepy_ws.git
+git clone https://github.com/AlexanderRoller/sweepy_ws.git
 cd sweepy_ws
+rosdep install --from-paths src --ignore-src -r -y
 colcon build
 source install/setup.bash
 ```
