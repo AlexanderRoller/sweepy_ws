@@ -7,7 +7,7 @@ from geometry_msgs.msg import Twist
 import numpy as np
 import logging
 import threading
-import serial 
+#import serial 
 import time 
 
 class ObstacleDetectionNode(Node):
@@ -25,31 +25,31 @@ class ObstacleDetectionNode(Node):
 
         # Placeholder for the latest LiDAR scan data and heading data 
         self.latest_scan_data = None
-        self.latest_heading = 0.0 
-        self.heading_lock = threading.Lock()
+        #self.latest_heading = 0.0 
+        #self.heading_lock = threading.Lock()
 
         # Placeholder for the previous command 
         self.prev_cmd = Twist()
-        self.desired_heading = None # store the desired heading 
+       # self.desired_heading = None # store the desired heading 
         
         # Thread to handle heading data 
-        self.heading_thread = threading.Thread(target=self.read_heading)
-        self.heading_thread.daemon = True 
-        self.heading_thread.start()
+        #self.heading_thread = threading.Thread(target=self.read_heading)
+        #self.heading_thread.daemon = True 
+        #self.heading_thread.start()
         
         # Storing initial counts 
         self.left_count = 0 
         self.right_count = 0 
-        self.both_count = 0 
+        self.front_count = 0 
 
         # PID controller parameters for heading correction 
-        self.kp = 0.01
-        self.ki = 0.0
-        self.kd = 0.0 
+        #self.kp = 0.01
+        #self.ki = 0.0
+        #self.kd = 0.0 
 
-        self.heading_error_sum = 0.0 
-        self.last_heading_error = 0.0 
-        self.last_time = time.time()
+        #self.heading_error_sum = 0.0 
+        #self.last_heading_error = 0.0 
+        #self.last_time = time.time()
 
     def lidar_callback(self, msg):
         # Store the latest scan data 
@@ -62,54 +62,61 @@ class ObstacleDetectionNode(Node):
         ranges = np.array(self.latest_scan_data.ranges)
         ranges[ranges == 0] = np.inf
 
-        # Split the ranges into left and right parts 
-        half_index = len(ranges) // 2 
-        left_ranges = ranges[:half_index]
-        right_ranges = ranges[half_index:]
+        # Split the ranges into left right and front parts
+        # 
+        left_indices = slice(0, len(ranges) // 3)
+        front_indices = slice(len(ranges) // 3, 2 * len(ranges) // 3) 
+        right_indices = slice(2 * len(ranges) // 3, len(ranges))
+        left_ranges = ranges[left_indices]
+        front_ranges = ranges[front_indices]
+        right_ranges = ranges[right_indices]
 
-        obstacles = {'left': False, 'right': False}
+        obstacles = {'left': False, 'front': False, 'right': False}
 
         min_left = np.min(left_ranges)
+        min_front = np.min(front_ranges)
         min_right = np.min(right_ranges)
 
-        if min_left < 0.5: # here 0.5 is the obstacle threshold 
+        if min_left < 0.45: # here 0.5 is the obstacle threshold 
             obstacles['left'] = True 
             self.get_logger().info(f'Obstacle detected in left region with range {min_left} meters.')
 
-        if min_right < 0.5:
+        if min_right < 0.45:
             obstacles['right'] = True 
             self.get_logger().info(f'Obstacle detected in right region with range {min_right} meters.')
+        if min_front < 0.45:
+            obstacles['front'] = True 
+            self.get_logger().info(f'Obstacle detected in front region with range {min_front} meters.')
 
-
-        if obstacles['left'] and not obstacles['right']:
-            self.left_count += 1
+        if obstacles['front']:
+            self.front_count += 1
             self.right_count = 0 
-            self.both_count = 0 
-            if self.left_count >= 3:
-                self.get_logger().info('Obstacle detected on the left, turning right.')
-                self.logger.info('Obstacle detected on the left, turning right.')
-                self.turn_right()
+            self.left_count = 0 
+            if self.front_count >= 3:
+                self.get_logger().info('Obstacle detected on the front, stopping and turning.')
+                self.logger.info('Obstacle detected on the front, stopping and turning.')
+                self.move_backward_and_turn_right()
             
-        elif obstacles['right'] and not obstacles['left']:
+        elif obstacles['right']:
             self.right_count += 1 
             self.left_count = 0 
-            self.both_count = 0 
+            self.front_count = 0 
             if self.right_count >= 3:
                 self.get_logger().info('Obstacle detected on the right, turning left.')
                 self.logger.info('Obstacle detected on the right, turning left.')
                 self.turn_left()
             
-        elif obstacles['left'] and obstacles['right']:
-            self.both_count += 1 
+        elif obstacles['left']:
+            self.left_count += 1 
             self.right_count = 0 
-            self.left_count = 0 
-            if self.both_count >= 3:
-                self.get_logger().info('Obstacle detected on both sides, stop')
-                self.logger.info('Obstacles detected on both sides. Stop')
-                self.move_backward_and_turn_right()
+            self.front_count = 0 
+            if self.left_count >= 3:
+                self.get_logger().info('Obstacle detected on left, turning right')
+                self.logger.info('Obstacles detected on both left, turning right')
+                self.turn_right()
             
         else:
-            self.both_count = 0 
+            self.front_count = 0 
             self.left_count = 0 
             self.right_count = 0 
             self.get_logger().info('No obstacles detected, performing random movement.')
@@ -117,32 +124,32 @@ class ObstacleDetectionNode(Node):
             self.move_forward()
 
     def move_forward(self):
-        current_heading = self.get_current_heading()
-        if self.desired_heading is None:
-            self.desired_heading = current_heading 
+        #current_heading = self.get_current_heading()
+        #if self.desired_heading is None:
+           # self.desired_heading = current_heading 
 
-        heading_error = self.desired_heading - current_heading 
+        #heading_error = self.desired_heading - current_heading 
 
         # PID control for heading correction 
-        current_time = time.time()
-        delta_time = current_time - self.last_time 
+        #current_time = time.time()
+        #delta_time = current_time - self.last_time 
 
-        self.heading_error_sum += heading_error * delta_time 
-        heading_error_rate = (heading_error - self.last_heading_error) / delta_time 
+        #self.heading_error_sum += heading_error * delta_time 
+        #heading_error_rate = (heading_error - self.last_heading_error) / delta_time 
 
-        angular_z = (self.kp * heading_error) + (self.ki * self.heading_error_sum) + (self.kd * heading_error_rate)
+       # angular_z = (self.kp * heading_error) + (self.ki * self.heading_error_sum) + (self.kd * heading_error_rate)
 
         cmd = Twist()
         cmd.linear.x = 0.7
-        cmd.angular.z = angular_z
+        cmd.angular.z = 0.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Forward')
         self.logger.info('Command: Move forward')
 
 
         # Update for next iteration 
-        self.last_heading_error = heading_error 
-        self.last_time = current_time
+        #self.last_heading_error = heading_error 
+        #self.last_time = current_time
 
     def turn_left(self):
         cmd = Twist()
@@ -153,7 +160,7 @@ class ObstacleDetectionNode(Node):
         self.logger.info('Command: Turn left')
         self.left_count = 0 
         self.right_count = 0 
-        self.both_count = 0 
+        self.front_count = 0 
        
     def turn_right(self):
         cmd = Twist()
@@ -164,7 +171,7 @@ class ObstacleDetectionNode(Node):
         self.logger.info('Command: Turn right')
         self.left_count = 0 
         self.right_count = 0 
-        self.both_count = 0 
+        self.front_count = 0 
        
     def stop(self):
         cmd = Twist()
@@ -195,7 +202,7 @@ class ObstacleDetectionNode(Node):
         threading.Timer(0.5, self.move_backward).start()
         threading.Timer(1.0, self.spot_turn_right).start()
         threading.Timer(3.5, self.move_forward).start()
-        self.both_count = 0 
+        self.front_count = 0 
         self.left_count = 0 
         self.right_count = 0 
 
@@ -204,31 +211,31 @@ class ObstacleDetectionNode(Node):
             self.prev_cmd = cmd 
             self.pub_cmd_vel.publish(cmd)
 
-    def read_heading (self):
-        port = "/dev/ttyUSB0"
-        baud_rate = 115200
-        try:
-            ser = serial.Serial(port, baud_rate, timeout=1)
-            self.get_logger().info(f"Connected to {port} at {baud_rate} baud rate.")
+    #def read_heading (self):
+        #port = "/dev/ttyUSB0"
+        #baud_rate = 115200
+        #try:
+           # ser = serial.Serial(port, baud_rate, timeout=1)
+           # self.get_logger().info(f"Connected to {port} at {baud_rate} baud rate.")
 
-            while True:
-                data = ser.readline().decode('utf-8').strip()
-                if data:
-                    self.latest_heading = float(data)
-                    self.get_logger().info(f'Heading: {self.latest_heading}')
+            #while True:
+               # data = ser.readline().decode('utf-8').strip()
+              #  if data:
+                   # self.latest_heading = float(data)
+                   # self.get_logger().info(f'Heading: {self.latest_heading}')
 
-        except serial.SerialException as e:
-            self.get_logger().error(f'Serial Error: {e}')
-        except KeyboardInterrupt:
-            self.get_logger().info('Exiting...')
-        finally:
-            if 'ser' in locals() and ser.is_open:
-                ser.close()
-                self.get_logger().info('Serial port closed')
+        #except serial.SerialException as e:
+         #   self.get_logger().error(f'Serial Error: {e}')
+        #except KeyboardInterrupt:
+         #   self.get_logger().info('Exiting...')
+        #finally:
+         #   if 'ser' in locals() and ser.is_open:
+          #      ser.close()
+           #     self.get_logger().info('Serial port closed')
 
-    def get_current_heading(self):
-        with self.heading_lock:
-            return self.latest_heading
+    #def get_current_heading(self):
+    #    with self.heading_lock:
+            #return self.latest_heading
 
 
 def main(args=None):
