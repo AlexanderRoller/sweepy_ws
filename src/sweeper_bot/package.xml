@@ -9,22 +9,21 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   
+  <build_depend>rclpy</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>navigation2</build_depend>
+  <build_depend>nav2_bringup</build_depend>
+  <build_depend>twist_mux</build_depend>
+  <build_depend>xacro</build_depend>
+  <build_depend>realsense2-camera</build_depend>
+  <build_depend>roboclaw-hardware-interface</build_depend>
+
   <exec_depend>joint_state_publisher</exec_depend>
-  <!--<exec_depend>joint_state_publisher_gui</exec_depend>!-->
+  <!-- <exec_depend>joint_state_publisher_gui</exec_depend> -->
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>rviz</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
-  <exec_depend>xacro</exec_depend>
-  <exec_depend>realsense2-camera</exec_depend>
-  <exec_depend>roboclaw-hardware-interface</exec_depend>
-
-  <depend>rclpy</depend>
-  <depend>sensor-msgs</depend>
-  <depend>navigation2</depend>
-  <depend>nav2-bringup</depend>
-  <depend>twist-mux</depend>
-  <depend>sick-scan-xd</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
