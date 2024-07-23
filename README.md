@@ -113,6 +113,20 @@ For manual control with a joystick, use the joystick launch file:
 ros2 launch sweeper_bot joystick_launch.py
 ```
 
+## Dependencies/Help 
+
+Project could not have been done without these people
+
+- [Roboclaw Hardware Interface](https://github.com/dumbotics/roboclaw_hardware_interface)
+- [Roboclaw Serial](https://github.com/dumbotics/roboclaw_serial)
+- [Nav2](https://github.com/ros-navigation/navigation2)
+- [Articubot One](https://github.com/joshnewans/articubot_one)
+- [ROS2 Control](https://github.com/ros-controls/ros2_control)
+- [SLAM Toolbox](https://github.com/SteveMacenski/slam_toolbox)
+- [Sick Scan](https://github.com/SICKAG/sick_scan_xd)
+- [Robot Localization](https://github.com/cra-ros-pkg/robot_localization)
+
+
 ## Troubleshooting
 
 ### Common Issues
