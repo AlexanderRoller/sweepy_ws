@@ -77,14 +77,14 @@ class ObstacleDetectionNode(Node):
         min_front = np.min(front_ranges)
         min_right = np.min(right_ranges)
 
-        if min_left < 0.45: # here 0.5 is the obstacle threshold 
+        if min_left < 0.5: # here 0.5 is the obstacle threshold 
             obstacles['left'] = True 
             self.get_logger().info(f'Obstacle detected in left region with range {min_left} meters.')
 
-        if min_right < 0.45:
+        if min_right < 0.5:
             obstacles['right'] = True 
             self.get_logger().info(f'Obstacle detected in right region with range {min_right} meters.')
-        if min_front < 0.45:
+        if min_front < 0.5:
             obstacles['front'] = True 
             self.get_logger().info(f'Obstacle detected in front region with range {min_front} meters.')
 
@@ -140,7 +140,7 @@ class ObstacleDetectionNode(Node):
        # angular_z = (self.kp * heading_error) + (self.ki * self.heading_error_sum) + (self.kd * heading_error_rate)
 
         cmd = Twist()
-        cmd.linear.x = 0.7
+        cmd.linear.x = 0.6
         cmd.angular.z = 0.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Forward')
@@ -183,7 +183,7 @@ class ObstacleDetectionNode(Node):
 
     def move_backward(self):
         cmd = Twist()
-        cmd.linear.x = -0.7 
+        cmd.linear.x = -0.6
         cmd.angular.z = 0.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Backward')
@@ -199,7 +199,7 @@ class ObstacleDetectionNode(Node):
 
     def move_backward_and_turn_right(self):
         self.stop()
-        threading.Timer(0.5, self.move_backward).start()
+        threading.Timer(0.3, self.move_backward).start()
         threading.Timer(1.0, self.spot_turn_right).start()
         threading.Timer(3.5, self.move_forward).start()
         self.front_count = 0 
