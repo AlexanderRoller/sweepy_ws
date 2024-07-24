@@ -120,9 +120,7 @@ class ObstacleDetectionNode(Node):
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Left')
         self.logger.info('Command: Turn left')
-        self.left_count = 0 
-        self.right_count = 0 
-        self.front_count = 0 
+        self.reset_counters()
        
     def turn_right(self):
         cmd = Twist()
@@ -131,9 +129,7 @@ class ObstacleDetectionNode(Node):
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Turn Right')
         self.logger.info('Command: Turn right')
-        self.left_count = 0 
-        self.right_count = 0 
-        self.front_count = 0 
+        self.reset_counters()
        
     def stop(self):
         cmd = Twist()
@@ -192,7 +188,7 @@ class ObstacleDetectionNode(Node):
         min_left = np.min(left_ranges)
         min_right = np.min(right_ranges)
         if min_right >= 0.5:
-            self.spot_turn_left()
+            self.spot_turn_right()
         elif min_left >= 0.5:
             self.spot_turn_left()
         else:
@@ -200,7 +196,15 @@ class ObstacleDetectionNode(Node):
             self.logger.info('Obstacles on both sides after backing up, stopping')
             self.stop()
             return 
-        threading.Timer(3.5, self.move_forward).start()
+        threading.Timer(3.5, self.move_forward_and_reset_counters).start()
+
+    def move_forward_and_reset_counters(self):
+        self.move_forward()
+        self.reset_counters()
+    def reset_counters(self):
+        self.left_count = 0 
+        self.right_count = 0
+        self.front_count = 0 
 
     def publish_cmd(self, cmd):
         if cmd.linear.x != self.prev_cmd.linear.x or cmd.angular.z != self.prev_cmd.angular.z:
