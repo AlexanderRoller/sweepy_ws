@@ -17,6 +17,11 @@
   <build_depend>xacro</build_depend>
   <build_depend>realsense2-camera</build_depend>
   <build_depend>roboclaw-hardware-interface</build_depend>
+  <build_depend>sick_scan_xd</build_depend>
+  <build_depend>slam_toolbox</build_depend>
+  <build_depend>robot_localization</build_depend>
+  <build_depend>joy</build_depend>
+  <build_depend>teleop_twist_joy</build_depend>
 
   <exec_depend>joint_state_publisher</exec_depend>
   <!-- <exec_depend>joint_state_publisher_gui</exec_depend> -->
