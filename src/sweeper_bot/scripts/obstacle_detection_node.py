@@ -7,7 +7,6 @@ from geometry_msgs.msg import Twist
 import numpy as np
 import logging
 import threading
-#import serial 
 import time 
 
 class ObstacleDetectionNode(Node):
@@ -25,31 +24,14 @@ class ObstacleDetectionNode(Node):
 
         # Placeholder for the latest LiDAR scan data and heading data 
         self.latest_scan_data = None
-        #self.latest_heading = 0.0 
-        #self.heading_lock = threading.Lock()
 
         # Placeholder for the previous command 
         self.prev_cmd = Twist()
-       # self.desired_heading = None # store the desired heading 
-        
-        # Thread to handle heading data 
-        #self.heading_thread = threading.Thread(target=self.read_heading)
-        #self.heading_thread.daemon = True 
-        #self.heading_thread.start()
         
         # Storing initial counts 
         self.left_count = 0 
         self.right_count = 0 
         self.front_count = 0 
-
-        # PID controller parameters for heading correction 
-        #self.kp = 0.01
-        #self.ki = 0.0
-        #self.kd = 0.0 
-
-        #self.heading_error_sum = 0.0 
-        #self.last_heading_error = 0.0 
-        #self.last_time = time.time()
 
     def lidar_callback(self, msg):
         # Store the latest scan data 
@@ -93,9 +75,9 @@ class ObstacleDetectionNode(Node):
             self.right_count = 0 
             self.left_count = 0 
             if self.front_count >= 3:
-                self.get_logger().info('Obstacle detected on the front, stopping and turning.')
-                self.logger.info('Obstacle detected on the front, stopping and turning.')
-                self.move_backward_and_turn_right()
+                self.get_logger().info('Obstacle detected on the front, stopping and deciding turn direction.')
+                self.logger.info('Obstacle detected on the front, stopping and deciding turning direction.')
+                self.stop_and_decide_turn()
             
         elif obstacles['right']:
             self.right_count += 1 
@@ -119,37 +101,17 @@ class ObstacleDetectionNode(Node):
             self.front_count = 0 
             self.left_count = 0 
             self.right_count = 0 
-            self.get_logger().info('No obstacles detected, performing random movement.')
-            self.logger.info('No obstacles detected, performing random movement.')
+            self.get_logger().info('No obstacles detected, moving forward.')
+            self.logger.info('No obstacles detected, moving forward.')
             self.move_forward()
 
     def move_forward(self):
-        #current_heading = self.get_current_heading()
-        #if self.desired_heading is None:
-           # self.desired_heading = current_heading 
-
-        #heading_error = self.desired_heading - current_heading 
-
-        # PID control for heading correction 
-        #current_time = time.time()
-        #delta_time = current_time - self.last_time 
-
-        #self.heading_error_sum += heading_error * delta_time 
-        #heading_error_rate = (heading_error - self.last_heading_error) / delta_time 
-
-       # angular_z = (self.kp * heading_error) + (self.ki * self.heading_error_sum) + (self.kd * heading_error_rate)
-
         cmd = Twist()
         cmd.linear.x = 0.6
         cmd.angular.z = 0.0
         self.pub_cmd_vel.publish(cmd)
         self.get_logger().info('Command: Move Forward')
         self.logger.info('Command: Move forward')
-
-
-        # Update for next iteration 
-        #self.last_heading_error = heading_error 
-        #self.last_time = current_time
 
     def turn_left(self):
         cmd = Twist()
@@ -197,46 +159,53 @@ class ObstacleDetectionNode(Node):
         self.get_logger().info('Command: Spot turning to right')
         self.logger.info('Command: Spot turning right')
 
-    def move_backward_and_turn_right(self):
+    def spot_turn_left(self):
+        cmd = Twist()
+        cmd.linear.x = 0.0 
+        cmd.angular.z = 2.0
+        self.pub_cmd_vel.publish(cmd)
+        self.get_logger().info('Command: Spot turning to left')
+        self.logger.info('Command: Spot turning to left')
+
+    def stop_and_decide_turn(self):
         self.stop()
-        threading.Timer(0.3, self.move_backward).start()
-        threading.Timer(1.0, self.spot_turn_right).start()
+        threading.Timer(0.3, self.move_backward_and_decide_turn).start()
+        #self.stop()
+        #threading.Timer(0.3, self.move_backward).start()
+        #threading.Timer(1.0, self.spot_turn_right).start()
+        #threading.Timer(3.5, self.move_forward).start()
+        #self.front_count = 0 
+        #self.left_count = 0 
+        #self.right_count = 0 
+    def move_backward_and_decide_turn(self):
+        self.move_backward()
+        threading.Timer(1.0, self.decide_turn).start()
+        
+    def decide_turn(self):
+        if self.latest_scan_data is None:
+            self.stop()
+            return
+        ranges = np.array(self.latest_scan_data.ranges)
+        ranges[ranges==0] = np.inf
+        left_ranges = ranges[:len(ranges) // 3]
+        right_ranges = ranges[2 * len(ranges) // 3:]
+        min_left = np.min(left_ranges)
+        min_right = np.min(right_ranges)
+        if min_right >= 0.5:
+            self.spot_turn_left()
+        elif min_left >= 0.5:
+            self.spot_turn_left()
+        else:
+            self.get_logger().info('Obstacles on both sides after backing up, stopping.')
+            self.logger.info('Obstacles on both sides after backing up, stopping')
+            self.stop()
+            return 
         threading.Timer(3.5, self.move_forward).start()
-        self.front_count = 0 
-        self.left_count = 0 
-        self.right_count = 0 
 
     def publish_cmd(self, cmd):
         if cmd.linear.x != self.prev_cmd.linear.x or cmd.angular.z != self.prev_cmd.angular.z:
             self.prev_cmd = cmd 
             self.pub_cmd_vel.publish(cmd)
-
-    #def read_heading (self):
-        #port = "/dev/ttyUSB0"
-        #baud_rate = 115200
-        #try:
-           # ser = serial.Serial(port, baud_rate, timeout=1)
-           # self.get_logger().info(f"Connected to {port} at {baud_rate} baud rate.")
-
-            #while True:
-               # data = ser.readline().decode('utf-8').strip()
-              #  if data:
-                   # self.latest_heading = float(data)
-                   # self.get_logger().info(f'Heading: {self.latest_heading}')
-
-        #except serial.SerialException as e:
-         #   self.get_logger().error(f'Serial Error: {e}')
-        #except KeyboardInterrupt:
-         #   self.get_logger().info('Exiting...')
-        #finally:
-         #   if 'ser' in locals() and ser.is_open:
-          #      ser.close()
-           #     self.get_logger().info('Serial port closed')
-
-    #def get_current_heading(self):
-    #    with self.heading_lock:
-            #return self.latest_heading
-
 
 def main(args=None):
     rclpy.init(args=args)
