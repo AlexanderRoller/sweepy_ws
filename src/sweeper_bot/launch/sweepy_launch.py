@@ -118,5 +118,5 @@ def generate_launch_description():
         joint_state_broadcaster_spawner,
         robot_controller_spawner,
         twist_mux,
-        sick_node,
+        #sick_node,
     ])
