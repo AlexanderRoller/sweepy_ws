@@ -14,8 +14,8 @@ amcl:
     global_frame_id: "map"
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
-    laser_max_range: 6.0  # Adjust based on actual max range of your laser
-    laser_min_range: 0.6  # Adjust to actual min range of your laser
+    laser_max_range: 25.0  # Adjust based on actual max range of your laser
+    laser_min_range: 0.25  # Adjust to actual min range of your laser
     laser_model_type: "likelihood_field"
     max_beams: 60
     max_particles: 1500  # Reduce for performance, if needed
@@ -235,10 +235,10 @@ local_costmap:
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 6.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 6.0
-          obstacle_min_range: 0.0
+          raytrace_max_range: 25.0
+          raytrace_min_range: 0.25
+          obstacle_max_range: 25.0
+          obstacle_min_range: 0.25
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
@@ -267,10 +267,10 @@ global_costmap:
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 6.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 6.0
-          obstacle_min_range: 0.0
+          raytrace_max_range: 25.0
+          raytrace_min_range: 0.25
+          obstacle_max_range: 25.0
+          obstacle_min_range: 0.25
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
