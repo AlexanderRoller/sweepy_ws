@@ -26,8 +26,8 @@ teleop_node:
 
     require_enable_button: true
 
-brush_control_node:
-  ros__parameters:
-    side_brush_1_button: 0
-    side_brush_2_button: 1
-    main_brush_button: 2
+#brush_control_node:
+ # ros__parameters:
+  #  side_brush_1_button: 0
+   # side_brush_2_button: 1
+    #main_brush_button: 2
