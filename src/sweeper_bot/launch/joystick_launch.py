@@ -24,12 +24,12 @@ def generate_launch_description():
             parameters=[joy_params, {'use_sim_time': use_sim_time}],
             remappings=[('/cmd_vel','/cmd_vel_joy')],
          )
-    brush_control_node = Node(
-            package='sweeper_bot',
-            executable='brush_control_node',
-            name='brush_control_node',
-            parameters=[{'use_sim_time': use_sim_time}]
-         )
+    #brush_control_node = Node(
+     #       package='sweeper_bot',
+      #      executable='brush_control_node',
+       #     name='brush_control_node',
+        #    parameters=[{'use_sim_time': use_sim_time}]
+         #)
    
     
     # twist_stamper = Node(
@@ -48,6 +48,6 @@ def generate_launch_description():
             description='Use sim time if true'),
         joy_node,
         teleop_node,
-        brush_control_node,
+        #brush_control_node,
         # twist_stamper,   
     ])
