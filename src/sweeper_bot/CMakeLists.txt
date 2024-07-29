@@ -14,6 +14,14 @@ find_package(rclpy REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(nav2_bringup REQUIRED)
 find_package(twist_mux REQUIRED)
+find_package(navigation2 REQUIRED)
+find_package(sick_scan_xd REQUIRED)
+find_package(slam_toolbox REQUIRED)
+find_package(robot_localization REQUIRED)
+find_package(joy REQUIRED)
+find_package(teleop_twist_joy REQUIRED)
+find_package(ros2_control REQUIRED)
+find_package(ros2_controllers REQUIRED)
 
 # Uncomment the following section in order to fill in
 # further dependencies manually.
