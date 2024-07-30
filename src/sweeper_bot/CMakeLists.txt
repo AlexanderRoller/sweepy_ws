@@ -28,6 +28,8 @@ install(
 # Install scripts
 install(PROGRAMS
   scripts/obstacle_detection_node.py
+  scripts/relay_controller_node.py 
+  scripts/imu_subscriber_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
