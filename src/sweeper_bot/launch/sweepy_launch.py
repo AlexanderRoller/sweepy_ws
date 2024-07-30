@@ -106,6 +106,13 @@ def generate_launch_description():
             'tf_base_frame_id:=sick_lidar_frame',
         ]
     )
+    scan_config = os.path.join(get_package_share_directory('sweeper_bot'),'config','scan_filter_params.yaml')
+    scan_filter = Node(
+        package='laser_filters',
+        executable='scan_to_scan_filter_chain',
+        #name='laser_filter_chain',
+        parameters=[scan_config],
+    )
 
     return LaunchDescription([
         DeclareLaunchArgument(name='model', default_value=default_model_path, description='Absolute path to robot urdf file'),
@@ -119,4 +126,5 @@ def generate_launch_description():
         robot_controller_spawner,
         twist_mux,
         sick_node,
+        scan_filter,
     ])
