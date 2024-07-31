@@ -114,6 +114,12 @@ def generate_launch_description():
         parameters=[scan_config],
     )
 
+    relay_controller = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+        get_package_share_directory('sweeper_bot'), 'launch', 'relay_controller_launch.py'
+        )])
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(name='model', default_value=default_model_path, description='Absolute path to robot urdf file'),
         DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path, description='Absolute path to rviz config file'),
@@ -127,4 +133,5 @@ def generate_launch_description():
         twist_mux,
         sick_node,
         scan_filter,
+        relay_controller,
     ])
