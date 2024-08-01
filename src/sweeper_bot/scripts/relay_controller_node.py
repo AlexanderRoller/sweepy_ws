@@ -18,9 +18,6 @@ class RelayControllerNode(Node):
         )
         self.subscription 
 
-        # IMU data publisher 
-        self.imu_publisher = self.create_publisher(String, 'imu_data', 10)
-
         # Debounce setup 
         self.last_command_time = time.time()
         self.debounce_duration = 0.5
@@ -65,9 +62,6 @@ class RelayControllerNode(Node):
                 try:
                     data = raw_data.decode('utf-8', errors='ignore').strip()
                     self.get_logger().info(f"Recieved from Arduino: {data}")
-                    if data:
-                        self.get_logger().info(f"Publishing IMU data: {data}")
-                        self.imu_publisher.publish(String(data=data))
                 except UnicodeDecodeError as e:
                     self.get_logger().warn(f"Failed to decode serial data: {e}")
         except serial.SerialException as e:
