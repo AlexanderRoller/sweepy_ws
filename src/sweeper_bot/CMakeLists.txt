@@ -22,6 +22,7 @@ find_package(joy REQUIRED)
 find_package(teleop_twist_joy REQUIRED)
 find_package(ros2_control REQUIRED)
 find_package(ros2_controllers REQUIRED)
+find_package(laser_filters REQUIRED)
 
 # Uncomment the following section in order to fill in
 # further dependencies manually.

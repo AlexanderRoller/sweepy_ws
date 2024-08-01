@@ -26,9 +26,9 @@
     </link>
 
     <joint name="sick_joint" type="fixed">
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="sick_link"/>
-        <origin xyz="${chassis_length} 0 ${chassis_height/3}" rpy="0 0 0"/>
+        <origin xyz=".813 0 .127" rpy="0 0 0"/>
     </joint>
 
     <link name="sick_lidar_frame"/>
