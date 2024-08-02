@@ -56,12 +56,12 @@ If you want to control the robot manually using a joystick:
 ros2 launch sweeper_bot joystick_launch.py
 ```
 
-### 5. Custom Obstacle Detection
+### 5. Turning the brushes ON 
 
-Launch the custom obstacle detection node to enhance the robot's awareness:
+Launch the relay controller node that establishes a serial communication between NVIDIA Jetson Orin Nano and Adafruit Huzzah ESP 32 Feather board to turn ON/OFF the main and side brushes:
 
 ```sh
-ros2 launch sweeper_bot obstacle_detection_launch.py
+ros2 launch sweeper_bot relay_controller_launch.py
 ```
 
 ## Configuration Files
@@ -78,8 +78,8 @@ Nav2 setup for path planning and autonomous navigation.
 ### `joystick.yaml`
 Joystick controller setup for manual robot control.
 
-### `obstacle_detection_launch.py`
-Custom node configuration for obstacle detection.
+### `relay_controller_launch.py`
+Custom node configuration for turning ON the main and side brushes.
 
 ## Usage
 
@@ -99,7 +99,7 @@ To launch everything for nav2 and joystick control
 ros2 launch sweeper_bot lex_dev_launch.py
 ```
 
-To launch custom obstacle avoidance and control
+To launch robot stack and relay control
 
 ```sh
 ros2 launch sweeper_bot vednshee_dev_launch.py
