@@ -1,6 +1,6 @@
 # Sweepy Bot
 
-Sweepy Bot is an autonomous mobile robot designed for sweeping tasks. This README provides instructions on how to set up and run the robot stack, SLAM, navigation, joystick control, and custom obstacle detection.
+Sweepy Bot is an autonomous mobile robot designed for sweeping tasks. This README provides instructions on how to set up and run the robot stack, SLAM, navigation, joystick control, and controlling the brushes through a relay control.
 
 ## Getting Started
 
