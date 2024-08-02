@@ -1,6 +1,8 @@
 slam_toolbox:
   ros__parameters:
 
+    tf_message_filter_queue_size: 200  # Increase the queue size further if needed
+
     # Plugin params
     solver_plugin: solver_plugins::CeresSolver
     ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
@@ -27,22 +29,22 @@ slam_toolbox:
     debug_logging: false
     throttle_scans: 1
     transform_publish_period: 0.02 #if 0 never publishes odometry
-    map_update_interval: .5
+    map_update_interval: .25
     resolution: 0.05
-    max_laser_range: 25.0 #for rastering images
+    max_laser_range: 25.0  # Ensure this matches your LIDAR's maximum range
     minimum_time_interval: 0.5
     transform_timeout: 0.2
-    tf_buffer_duration: 30.
-    stack_size_to_use: 40000000 #// program needs a larger stack size to serialize large maps
+    tf_buffer_duration: 60.0
+    stack_size_to_use: 40000000  # Ensure sufficient stack size for large maps
     enable_interactive_mode: true
 
     # General Parameters
     use_scan_matching: true
     use_scan_barycenter: true
-    minimum_travel_distance: 0.5
-    minimum_travel_heading: 0.5
+    minimum_travel_distance: 0.2  # Adjust to avoid processing redundant scans
+    minimum_travel_heading: 0.2  # Adjust to avoid processing redundant scans
     scan_buffer_size: 10
-    scan_buffer_maximum_scan_distance: 10.0
+    scan_buffer_maximum_scan_distance: 25.0
     link_match_minimum_response_fine: 0.1  
     link_scan_maximum_distance: 1.5
     loop_search_maximum_distance: 3.0
@@ -52,12 +54,12 @@ slam_toolbox:
     loop_match_minimum_response_coarse: 0.35    
     loop_match_minimum_response_fine: 0.45
 
-    # Correlation Parameters - Correlation Parameters
+    # Correlation Parameters
     correlation_search_space_dimension: 0.5
     correlation_search_space_resolution: 0.01
     correlation_search_space_smear_deviation: 0.1 
 
-    # Correlation Parameters - Loop Closure Parameters
+    # Loop Closure Parameters
     loop_search_space_dimension: 8.0
     loop_search_space_resolution: 0.05
     loop_search_space_smear_deviation: 0.03
