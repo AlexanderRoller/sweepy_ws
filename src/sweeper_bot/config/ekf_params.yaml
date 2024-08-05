@@ -1,5 +1,6 @@
 ekf_filter_node:
   ros__parameters:
+
     frequency: 30.0
     print_diagnostics: true
     permit_corrected_publication: true

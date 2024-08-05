@@ -5,7 +5,7 @@ from launch_ros.actions import Node
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.substitutions import FindPackageShare
-from ament_index_python import get_package_share_directory
+from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_share = FindPackageShare(package='sweeper_bot').find('sweeper_bot')
@@ -36,6 +36,7 @@ def generate_launch_description():
         executable='rviz2',
         name='rviz2',
         output='screen',
+        parameters=[{'use_sim_time': False}],
         arguments=['-d', LaunchConfiguration('rvizconfig')],
     )
 
@@ -44,7 +45,7 @@ def generate_launch_description():
         executable='ekf_node',
         name='ekf_filter_node',
         output='screen',
-        parameters=[ekf_params_file]
+        parameters=[ekf_params_file, {'use_sim_time': False}]
     )
 
     robot_controllers_path = PathJoinSubstitution([
@@ -56,7 +57,7 @@ def generate_launch_description():
     ros2_control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[robot_description, robot_controllers_path],
+        parameters=[robot_description, robot_controllers_path, {'use_sim_time': False}],
         output="both",
         #arguments=['--ros-args', '--log-level', 'debug'],
     )
@@ -69,6 +70,7 @@ def generate_launch_description():
                 executable="spawner",
                 arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
                 output="both",
+                parameters=[{'use_sim_time': False}],
             )
         ]
     )
@@ -81,17 +83,18 @@ def generate_launch_description():
                 executable="spawner",
                 arguments=["diffbot_base_controller", "--controller-manager", "/controller_manager"],
                 output="both",
+                parameters=[{'use_sim_time': False}],
             )
         ]
     )
     
     twist_mux_params = os.path.join(get_package_share_directory('sweeper_bot'),'config','twist_mux.yaml')
     twist_mux = Node(
-            package="twist_mux",
-            executable="twist_mux",
-            parameters=[twist_mux_params],
-            remappings=[('/cmd_vel_out','/diffbot_base_controller/cmd_vel_unstamped')]
-        )
+        package="twist_mux",
+        executable="twist_mux",
+        parameters=[twist_mux_params, {'use_sim_time': False}],
+        remappings=[('/cmd_vel_out','/diffbot_base_controller/cmd_vel_unstamped')]
+    )
     
     sick_scan_pkg_prefix = get_package_share_directory('sick_scan_xd')
     tim_launch_file_path = os.path.join(sick_scan_pkg_prefix, 'launch/sick_tim_7xx.launch')
@@ -100,24 +103,25 @@ def generate_launch_description():
         package='sick_scan_xd',
         executable='sick_generic_caller',
         output= 'screen',
+        parameters=[{'use_sim_time': False}],
         arguments=[
             tim_launch_file_path,
-            #'frame_id:=sick_lidar_frame',
             'tf_base_frame_id:=sick_lidar_frame',
+            'tf_publish_rate:=30.0',
         ]
     )
+    
     scan_config = os.path.join(get_package_share_directory('sweeper_bot'),'config','scan_filter_params.yaml')
     scan_filter = Node(
         package='laser_filters',
         executable='scan_to_scan_filter_chain',
-        #name='laser_filter_chain',
-        parameters=[scan_config],
+        parameters=[scan_config, {'use_sim_time': False}],
     )
 
     relay_controller = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
         get_package_share_directory('sweeper_bot'), 'launch', 'relay_controller_launch.py'
-        )])
+        )]), launch_arguments={'use_sim_time': 'false'}.items()
     )
 
     return LaunchDescription([
@@ -133,5 +137,5 @@ def generate_launch_description():
         twist_mux,
         sick_node,
         scan_filter,
-        relay_controller,
+        #relay_controller,
     ])
