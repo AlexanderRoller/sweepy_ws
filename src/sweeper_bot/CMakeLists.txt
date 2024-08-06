@@ -23,6 +23,7 @@ find_package(teleop_twist_joy REQUIRED)
 find_package(ros2_control REQUIRED)
 find_package(ros2_controllers REQUIRED)
 find_package(laser_filters REQUIRED)
+find_package(mpu9250driver REQUIRED)
 
 # Uncomment the following section in order to fill in
 # further dependencies manually.
@@ -38,7 +39,6 @@ install(
 install(PROGRAMS
   scripts/obstacle_detection_node.py
   scripts/relay_controller_node.py 
-  scripts/imu_subscriber_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -124,10 +124,17 @@ def generate_launch_description():
         )]), launch_arguments={'use_sim_time': 'false'}.items()
     )
 
+    imu = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+        get_package_share_directory('mpu9250driver'), 'launch', 'mpu9250driver_launch.py'
+        )])
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(name='model', default_value=default_model_path, description='Absolute path to robot urdf file'),
         DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path, description='Absolute path to rviz config file'),
         #joint_state_publisher_node,
+        #imu,
         rsp,
         rviz_node,
         ekf_node,
