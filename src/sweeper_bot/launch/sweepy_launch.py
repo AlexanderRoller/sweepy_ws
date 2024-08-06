@@ -137,5 +137,5 @@ def generate_launch_description():
         twist_mux,
         sick_node,
         scan_filter,
-        #relay_controller,
+        relay_controller,
     ])
