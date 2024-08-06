@@ -125,7 +125,7 @@ Project could not have been done without these people
 - [SLAM Toolbox](https://github.com/SteveMacenski/slam_toolbox)
 - [Sick Scan](https://github.com/SICKAG/sick_scan_xd)
 - [Robot Localization](https://github.com/cra-ros-pkg/robot_localization)
-
+- lex/vedanshee 😎
 
 ## Troubleshooting
 
