@@ -1,6 +1,6 @@
 # Sweepy Bot
 
-Sweepy Bot is an autonomous mobile robot designed for sweeping tasks. This README provides instructions on how to set up and run the robot stack, SLAM, navigation, joystick control, and controlling the brushes through a relay control.
+Sweepy Bot is an autonomous mobile robot designed for sweeping tasks. This README provides instructions on how to set up and run the robot stack, SLAM, navigation, joystick control, and controlling the brushes through relay control.
 
 ## Getting Started
 
@@ -26,7 +26,7 @@ source install/setup.bash
 
 ### 1. Robot Stack
 
-Launch the robot stack which includes drivers and sensor nodes:
+Launch the robot stack, which includes drivers, sensor nodes, and relay control:
 
 ```sh
 ros2 launch sweeper_bot sweepy_launch.py
@@ -56,18 +56,10 @@ If you want to control the robot manually using a joystick:
 ros2 launch sweeper_bot joystick_launch.py
 ```
 
-### 5. Turning the brushes ON 
-
-Launch the relay controller node that establishes a serial communication between NVIDIA Jetson Orin Nano and Adafruit Huzzah ESP 32 Feather board to turn ON/OFF the main and side brushes:
-
-```sh
-ros2 launch sweeper_bot relay_controller_launch.py
-```
-
 ## Configuration Files
 
 ### `sweepy_launch.py`
-Contains configurations for initializing the robot stack, including sensors and drivers.
+Contains configurations for initializing the robot stack, including sensors, drivers, and relay control.
 
 ### `slam_toolbox-params.yaml`
 SLAM setup for creating and updating the map in real-time.
@@ -77,9 +69,6 @@ Nav2 setup for path planning and autonomous navigation.
 
 ### `joystick.yaml`
 Joystick controller setup for manual robot control.
-
-### `relay_controller_launch.py`
-Custom node configuration for turning ON the main and side brushes.
 
 ## Usage
 
@@ -93,16 +82,10 @@ ros2 launch sweeper_bot online_async_launch.py
 ros2 launch sweeper_bot navigation_launch.py
 ```
 
-To launch everything for nav2 and joystick control
+To launch everything for Nav2, SLAM, and joystick control:
 
 ```sh
 ros2 launch sweeper_bot lex_dev_launch.py
-```
-
-To launch robot stack and relay control
-
-```sh
-ros2 launch sweeper_bot vednshee_dev_launch.py
 ```
 
 ### Manual Control
@@ -113,9 +96,19 @@ For manual control with a joystick, use the joystick launch file:
 ros2 launch sweeper_bot joystick_launch.py
 ```
 
-## Dependencies/Help 
+### Joystick Control Details
 
-Project could not have been done without these people
+When using a Bluetooth controller:
+- The **left joystick button** controls the movement of the robot.
+- An **enable button** must also be held down.
+- On a PS4 controller:
+  - The **left trigger** enables half speed.
+  - The **right trigger** enables full speed.
+  - The **bumpers** control the turning on and off of the brushes.
+
+## Dependencies/Help
+
+This project could not have been done without these people and resources:
 
 - [Roboclaw Hardware Interface](https://github.com/dumbotics/roboclaw_hardware_interface)
 - [Roboclaw Serial](https://github.com/dumbotics/roboclaw_serial)
@@ -133,3 +126,5 @@ Project could not have been done without these people
 
 - **Connection Issues**: Ensure all hardware is properly connected and configured.
 - **Dependency Errors**: Make sure all dependencies are installed and sourced.
+
+Feel free to reach out for further assistance or inquiries.
