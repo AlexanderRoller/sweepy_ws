@@ -39,6 +39,8 @@ install(
 install(PROGRAMS
   scripts/obstacle_detection_node.py
   scripts/relay_controller_node.py 
+  scripts/follow_waypoints.py
+  scripts/nav_to_pose.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -30,7 +30,7 @@ amcl:
     save_pose_rate: 0.5  # Rate to save the pose to file. Default: 0.5
     sigma_hit: 0.2  # Standard deviation for the hit model. Default: 0.2
     tf_broadcast: true  # Enable TF broadcasting. Default: true
-    transform_tolerance: 10.0  # Transform tolerance in seconds. Default: 1.0
+    transform_tolerance: 1.0  # Transform tolerance in seconds. Default: 1.0
     update_min_a: 0.2  # Minimum update angle for AMCL. Default: 0.2
     update_min_d: 0.25  # Minimum update distance for AMCL. Default: 0.25
     z_hit: 0.5  # Weight for the hit part of the laser model. Default: 0.5
@@ -107,7 +107,7 @@ bt_navigator_navigate_to_pose_rclcpp_node:
 controller_server:
   ros__parameters:
     use_sim_time: false  # Use simulation time (true) or real time (false). Default: false
-    controller_frequency: 20.0  # Frequency of the controller updates in Hz. Default: 20.0
+    controller_frequency: 40.0  # Frequency of the controller updates in Hz. Default: 20.0
     min_x_velocity_threshold: 0.001  # Minimum X velocity threshold. Default: 0.0
     min_y_velocity_threshold: 0.5  # Minimum Y velocity threshold. Default: 0.0
     min_theta_velocity_threshold: 0.001  # Minimum angular velocity threshold. Default: 0.0
@@ -173,8 +173,8 @@ controller_server:
 local_costmap:
   local_costmap:
     ros__parameters:
-      update_frequency: 5.0  # Frequency to update the local costmap in Hz. Default: 5.0
-      publish_frequency: 2.0  # Frequency to publish the local costmap in Hz. Default: 2.0
+      update_frequency: 10.0  # Frequency to update the local costmap in Hz. Default: 5.0
+      publish_frequency: 4.0  # Frequency to publish the local costmap in Hz. Default: 2.0
       global_frame: odom  # The frame ID of the global frame. Default: "odom"
       robot_base_frame: base_link  # The frame ID of the robot base. Default: "base_link"
       use_sim_time: false  # Use simulation time (true) or real time (false). Default: false
@@ -216,8 +216,8 @@ local_costmap:
 global_costmap:
   global_costmap:
     ros__parameters:
-      update_frequency: 1.0  # Frequency to update the global costmap in Hz. Default: 1.0
-      publish_frequency: 1.0  # Frequency to publish the global costmap in Hz. Default: 1.0
+      update_frequency: 2.0  # Frequency to update the global costmap in Hz. Default: 1.0
+      publish_frequency: 2.0  # Frequency to publish the global costmap in Hz. Default: 1.0
       global_frame: map  # The frame ID of the global frame. Default: "map"
       robot_base_frame: base_link  # The frame ID of the robot base. Default: "base_link"
       use_sim_time: false  # Use simulation time (true) or real time (false). Default: false
@@ -263,14 +263,14 @@ map_saver:
 
 planner_server:
   ros__parameters:
-    expected_planner_frequency: 20.0  # Expected frequency of the planner in Hz. Default: 20.0
+    expected_planner_frequency: 40.0  # Expected frequency of the planner in Hz. Default: 20.0
     use_sim_time: false  # Use simulation time (true) or real time (false). Default: false
     planner_plugins: ["GridBased"]  # List of planner plugins. Default: ["GridBased"]
     tf_buffer_duration: 30.0  # Duration to buffer transforms in seconds. Default: 10.0
     GridBased:
       plugin: "nav2_smac_planner/SmacPlannerLattice"  # Plugin for the GridBased planner. Default: "nav2_smac_planner/SmacPlannerLattice"
       tolerance: 1.0  # Tolerance for the planner in meters. Default: 0.5
-      use_astar: false  # Whether to use A* algorithm. Default: true
+      use_astar: true  # Whether to use A* algorithm. Default: true
       allow_unknown: true  # Whether to allow planning through unknown space. Default: false
 
 smoother_server:
@@ -287,7 +287,7 @@ behavior_server:
   ros__parameters:
     costmap_topic: local_costmap/costmap_raw  # Topic name for the local costmap. Default: "local_costmap/costmap_raw"
     footprint_topic: local_costmap/published_footprint  # Topic name for the robot footprint. Default: "local_costmap/published_footprint"
-    cycle_frequency: 10.0  # Frequency of the behavior server in Hz. Default: 10.0
+    cycle_frequency: 20.0  # Frequency of the behavior server in Hz. Default: 10.0
     behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]  # List of behavior plugins. Default: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
     spin:
       plugin: "nav2_behaviors/Spin"  # Plugin for the spin behavior. Default: "nav2_behaviors/Spin"
@@ -316,7 +316,7 @@ waypoint_follower:
   ros__parameters:
     use_sim_time: false  # Use simulation time (true) or real time (false). Default: false
     loop_rate: 20  # Loop rate for the waypoint follower in Hz. Default: 20
-    stop_on_failure: false  # Whether to stop on failure. Default: false
+    stop_on_failure: false # Whether to stop on failure. Default: false
     waypoint_task_executor_plugin: "wait_at_waypoint"  # Plugin for executing tasks at waypoints. Default: "wait_at_waypoint"
     wait_at_waypoint:
       plugin: "nav2_waypoint_follower::WaitAtWaypoint"  # Plugin for the wait at waypoint task. Default: "nav2_waypoint_follower::WaitAtWaypoint"
@@ -326,7 +326,7 @@ waypoint_follower:
 velocity_smoother:
   ros__parameters:
     use_sim_time: false  # Use simulation time (true) or real time (false). Default: false
-    smoothing_frequency: 20.0  # Frequency of the velocity smoother in Hz. Default: 20.0
+    smoothing_frequency: 40.0  # Frequency of the velocity smoother in Hz. Default: 20.0
     scale_velocities: False  # Whether to scale velocities. Default: false
     feedback: "OPEN_LOOP"  # Feedback type for the velocity smoother. Default: "OPEN_LOOP"
     max_velocity: [0.26, 0.0, 1.0]  # Maximum velocities for X, Y, and angular velocities. Default: [0.26, 0.0, 1.0]

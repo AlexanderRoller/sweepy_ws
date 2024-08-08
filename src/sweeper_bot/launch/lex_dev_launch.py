@@ -33,5 +33,5 @@ def generate_launch_description():
         sweepy,
         joystick,
         slam,
-        TimerAction(period=5.0, actions=[nav2]),  # Introduce a delay of 5 seconds before starting nav2
+        nav2, 
     ])
