@@ -17,13 +17,14 @@ slam_toolbox:
     base_frame: base_footprint  # The frame ID of the robot base. Default: base_footprint
     scan_topic: /scan_filtered  # The topic name for incoming laser scans. Default: /scan
     use_map_saver: true  # Whether to use the map saver plugin. Default: true
-    mode: mapping  # The mode of operation: mapping or localization. Default: localization
+    mode: mapping # The mode of operation: mapping or localization. Default: localization
 
     # if you'd like to immediately start continuing a map at a given pose
     # or at the dock, but they are mutually exclusive, if pose is given
     # will use pose
-    #map_file_name: test_steve  # The file name of the map to load. Default: None
-    # map_start_pose: [0.0, 0.0, 0.0]  # The starting pose to use with the map. Default: [0.0, 0.0, 0.0]
+    #map_file_name: /home/sweepynvidia/sweepy_ws/src/sweeper_bot/maps/new_map_serial
+    # The file name of the map to load. Default: None
+    #map_start_pose: [-4.425251007080078, 0.1910037398338318, 0.0]  # The starting pose to use with the map. Default: [0.0, 0.0, 0.0]
     #map_start_at_dock: true  # Whether to start the map at the dock. Default: false
 
     debug_logging: false  # Whether to enable debug logging. Default: false

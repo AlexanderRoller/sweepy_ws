@@ -1,63 +1,31 @@
 #!/usr/bin/env python3
-
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 
-class ObstacleDetectionNode(Node):
+class ObjectDetectionNode(Node):
 
     def __init__(self):
-        super().__init__('obstacle_detection_node')
-        self.subscription = self.create_subscription(
-            LaserScan,
-            '/scan_filtered',
-            self.listener_callback,
-            10)
+        super().__init__('object_detection_node')
+        self.get_logger().info('Initializing spin robot node...')
         self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
-        self.subscription  # prevent unused variable warning
-        self.get_logger().info('Node initialized and subscriptions created.')
+        self.timer = self.create_timer(0.1, self.timer_callback)
+        self.get_logger().info('Node initialized and ready to spin the robot.')
 
-    def listener_callback(self, msg):
-        ranges = msg.ranges
-        num_values = len(ranges)
-        left_side = ranges[:num_values//3]
-        right_side = ranges[-num_values//3:]
-        
-        min_left = min(left_side)
-        min_right = min(right_side)
-
-        self.get_logger().info(f'Left side min range: {min_left}')
-        self.get_logger().info(f'Right side min range: {min_right}')
-
+    def timer_callback(self):
         move_cmd = Twist()
-        
-        # Check for obstacles
-        if min_left < 0.5:
-            # Turn right
-            self.get_logger().info('Obstacle detected on the left, turning right.')
-            move_cmd.angular.z = -0.5
-            move_cmd.linear.x = 0.0
-        elif min_right < 0.5:
-            # Turn left
-            self.get_logger().info('Obstacle detected on the right, turning left.')
-            move_cmd.angular.z = 0.5
-            move_cmd.linear.x = 0.0
-        else:
-            # Go straight
-            self.get_logger().info('No obstacles detected, going straight.')
-            move_cmd.angular.z = 0.0
-            move_cmd.linear.x = 0.5
+        move_cmd.angular.z = 0.5  # Adjust this value for faster or slower spinning
+        move_cmd.linear.x = 0.0   # Ensure no forward/backward movement
 
         # Publish the command
         self.publisher_.publish(move_cmd)
-        self.get_logger().info('Movement command published.')
+        self.get_logger().info('Publishing spin command...')
 
 def main(args=None):
     rclpy.init(args=args)
-    obstacle_detection_node= ObstacleDetectionNode()
-    rclpy.spin(obstacle_detection_node)
-    obstacle_detection_node.destroy_node()
+    object_detection_node = ObjectDetectionNode()
+    rclpy.spin(object_detection_node)
+    object_detection_node.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':

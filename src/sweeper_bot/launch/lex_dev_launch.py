@@ -11,12 +11,6 @@ def generate_launch_description():
         )])
     )
 
-    joystick = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(
-        get_package_share_directory('sweeper_bot'),'launch','joystick_launch.py'
-        )])
-    )
-
     slam = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
         get_package_share_directory('sweeper_bot'),'launch','online_async_launch.py'
@@ -31,7 +25,6 @@ def generate_launch_description():
 
     return LaunchDescription([
         sweepy,
-        joystick,
         slam,
         nav2, 
     ])

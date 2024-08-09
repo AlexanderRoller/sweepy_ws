@@ -31,7 +31,7 @@ find_package(mpu9250driver REQUIRED)
 
 # Install directories
 install(
-  DIRECTORY src launch config
+  DIRECTORY src launch config maps
   DESTINATION share/${PROJECT_NAME}
 )
 
@@ -41,6 +41,7 @@ install(PROGRAMS
   scripts/relay_controller_node.py 
   scripts/follow_waypoints.py
   scripts/nav_to_pose.py
+  scripts/goal_publisher.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

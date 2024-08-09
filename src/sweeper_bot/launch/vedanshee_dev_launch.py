@@ -19,6 +19,19 @@ def generate_launch_description():
         )])
     )
 
+    localization = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+        get_package_share_directory('sweeper_bot'), 'launch', 'localization_launch.py'
+        )])
+    )
+
+    navigation = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+        get_package_share_directory('sweeper_bot'), 'launch', 'navigation_launch.py'
+        )])
+    )
+
+
     #obs_det = IncludeLaunchDescription(
      #   PythonLaunchDescriptionSource([os.path.join(
       #  get_package_share_directory('sweeper_bot'),'launch','obstacle_detection_launch.py'
@@ -35,5 +48,7 @@ def generate_launch_description():
         sweepy,
         joystick,
         #obs_det,
+        localization,
+        navigation,
         relay_controller,
     ])

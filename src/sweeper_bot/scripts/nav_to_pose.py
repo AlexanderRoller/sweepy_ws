@@ -29,14 +29,14 @@ def main():
     navigator = BasicNavigator()
 
     # Set our demo's initial pose
-    initial_pose = PoseStamped()
-    initial_pose.header.frame_id = 'map'
-    initial_pose.header.stamp = navigator.get_clock().now().to_msg()
-    initial_pose.pose.position.x = 0.0
-    initial_pose.pose.position.y = 0.0
-    initial_pose.pose.orientation.z = 0.0
-    initial_pose.pose.orientation.w = 1.0
-    navigator.setInitialPose(initial_pose)
+    # initial_pose = PoseStamped()
+    # initial_pose.header.frame_id = 'map'
+    # initial_pose.header.stamp = navigator.get_clock().now().to_msg()
+    # initial_pose.pose.position.x = 0.0
+    # initial_pose.pose.position.y = 0.0
+    # initial_pose.pose.orientation.z = 0.0
+    # initial_pose.pose.orientation.w = 1.0
+    # navigator.setInitialPose(initial_pose)
 
     # Activate navigation, if not autostarted. This should be called after setInitialPose()
     # or this will initialize at the origin of the map and update the costmap with bogus readings.
@@ -58,10 +58,10 @@ def main():
     goal_pose = PoseStamped()
     goal_pose.header.frame_id = 'map'
     goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-    goal_pose.pose.position.x = 17.86
-    goal_pose.pose.position.y = -0.77
-    goal_pose.pose.orientation.w = 1.0
-    goal_pose.pose.orientation.z = 0.0
+    goal_pose.pose.position.x = 0.29
+    goal_pose.pose.position.y = -0.10
+    goal_pose.pose.orientation.w = .994
+    goal_pose.pose.orientation.z = 0.219
 
     # sanity check a valid path exists
     # path = navigator.getPath(initial_pose, goal_pose)
