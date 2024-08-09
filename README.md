@@ -48,14 +48,6 @@ For autonomous navigation, launch the Nav2 stack:
 ros2 launch sweeper_bot navigation_launch.py
 ```
 
-### 4. Joystick Controller
-
-If you want to control the robot manually using a joystick:
-
-```sh
-ros2 launch sweeper_bot joystick_launch.py
-```
-
 ## Configuration Files
 
 ### `sweepy_launch.py`
@@ -82,19 +74,12 @@ ros2 launch sweeper_bot online_async_launch.py
 ros2 launch sweeper_bot navigation_launch.py
 ```
 
-To launch everything for Nav2, SLAM, and joystick control:
+To launch everything for Nav2 and SLAM:
 
 ```sh
 ros2 launch sweeper_bot lex_dev_launch.py
 ```
 
-### Manual Control
-
-For manual control with a joystick, use the joystick launch file:
-
-```sh
-ros2 launch sweeper_bot joystick_launch.py
-```
 
 ### Joystick Control Details
 
