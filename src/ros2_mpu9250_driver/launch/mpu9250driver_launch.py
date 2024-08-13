@@ -6,7 +6,6 @@ from launch.substitutions import LaunchConfiguration
 
 import os
 
-
 def generate_launch_description():
     ld = LaunchDescription()
     share_dir = get_package_share_directory('mpu9250driver')
@@ -19,7 +18,7 @@ def generate_launch_description():
 
     mpu9250driver_node = Node(
         package='mpu9250driver',
-        executable='mpu9250driver',
+        executable='mpu9250driver_node',
         name='mpu9250driver_node',
         output="screen",
         emulate_tty=True,
