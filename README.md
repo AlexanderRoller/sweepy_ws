@@ -7,7 +7,7 @@ Sweepy Bot is an autonomous mobile robot designed for sweeping tasks. This READM
 ### Prerequisites
 
 Ensure you have the following installed:
-- ROS 2
+- ROS 2 (Exclusively tested on Humble)
 - Relevant ROS 2 packages and dependencies
 
 ### Repository Setup
