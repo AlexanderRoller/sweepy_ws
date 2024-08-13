@@ -21,7 +21,7 @@ def generate_launch_description():
 
     localization = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
-        get_package_share_directory('sweeper_bot'), 'launch', 'localization_launch.py'
+        get_package_share_directory('sweeper_bot'), 'launch', 'amcl_launch.py'
         )])
     )
 
@@ -46,9 +46,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         sweepy,
-        joystick,
         #obs_det,
         localization,
         navigation,
-        relay_controller,
     ])
