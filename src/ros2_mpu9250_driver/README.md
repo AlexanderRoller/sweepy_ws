@@ -2,6 +2,11 @@
 
 This repository contains a ROS2 package that interfaces with an MPU9250 sensor over I2C. The accelerometer and gyroscope are calibrated on node startup (the sensor should be placed on a flat surface with the z-axis pointing up and should remain stationary during calibration). Calibration can be turned off in the parameters file. The current implementation allows for customization of the gyroscope and accelerometer ranges, digital low pass filter (DLPF) settings, and sensor offsets.
 
+This setup is specifically configured for a Jetson Orin Nano, where the MPU9250 sensor is connected as follows:
+- **SDA** is connected to pin **3**
+- **SCL** is connected to pin **5**
+- This corresponds to **I2C bus 7** on the Jetson Orin Nano.
+
 ## Dependencies
 - Python 3
 - ROS 2 Humble
@@ -51,6 +56,13 @@ After building the package, source the setup script:
 
 To launch the node with the configured parameters:
 
+```bash
+ros2 launch mpu9250driver mpu9250driver_launch.py
+```
+
+---
+
+This README now includes the specific details about the Jetson Orin Nano setup, making it clear how the MPU9250 sensor is connected and which I2C bus is used.
 ```bash
 ros2 launch mpu9250driver mpu9250driver_launch.py
 ```
