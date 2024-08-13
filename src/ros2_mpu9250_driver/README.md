@@ -55,7 +55,4 @@ To launch the node with the configured parameters:
 ros2 launch mpu9250driver mpu9250driver_launch.py
 ```
 
-## Disclaimer
-
-This project is still a **work in progress**. While I will continue to make improvements as time allows, please understand that not everything may work perfectly. Contributions and bug fixes are welcome! Feel free to create a pull request if you'd like to contribute.
 
